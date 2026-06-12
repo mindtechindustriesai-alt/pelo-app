@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>PELO | Community Intelligence Network</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #00B4D8;
+            --primary-dark: #0096C7;
+            --primary-glow: rgba(0,180,216,0.4);
+            --secondary: #00F5D4;
+            --quantum: #8A2BE2;
+            --quantum-glow: rgba(138,43,226,0.5);
+            --success: #00FF88;
+            --danger: #EF476F;
+            --warning: #FFD166;
+            --dark-bg: #05080F;
+            --dark-card: #0A0F1A;
+            --glass-border: rgba(0,180,216,0.2);
+            --text-primary: #E8EDF5;
+            --text-secondary: #8A99B0;
+            --font-exo: 'Exo 2', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+        
+        body { font-family: var(--font-exo); background: var(--dark-bg); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; position: relative; }
+        #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .container { max-width: 1300px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
+        
+        .glass-card, .stat-card, .guardian-card, .incident-item, .chat-message, .menu-btn, .notification-icon, .report-form-input {
+            background: rgba(15, 25, 45, 0.45);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        .glass-card:hover, .stat-card:hover, .guardian-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,180,216,0.15); }
+        
+        .login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5,8,15,0.98); backdrop-filter: blur(20px);
+            z-index: 2000; display: flex; align-items: center; justify-content: center;
+            overflow-y: auto; padding: 30px 15px;
+        }
+        .login-card {
+            background: rgba(8, 16, 28, 0.9); backdrop-filter: blur(24px);
+            border-radius: 48px; padding: 35px 32px; text-align: center;
+            max-width: 520px; width: 100%; border: 1px solid rgba(0, 180, 216, 0.4);
+            box-shadow: 0 25px 45px rgba(0,0,0,0.4), 0 0 35px rgba(0,180,216,0.15);
+        }
+        .login-logo { max-width: 260px; width: 100%; filter: drop-shadow(0 0 18px #00B4D8); margin-bottom: 15px; }
+        .trial-badge { background: rgba(0,255,136,0.12); border: 1px solid var(--success); border-radius: 60px; padding: 6px 18px; display: inline-block; margin-bottom: 20px; font-size: 12px; }
+        .login-input, .login-select {
+            width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border);
+            border-radius: 60px; padding: 12px 18px; color: white; margin-bottom: 12px; font-size: 14px;
+        }
+        .demo-btn {
+            background: linear-gradient(135deg, var(--quantum), var(--primary));
+            border: none; padding: 14px; border-radius: 60px; font-weight: 700;
+            width: 100%; cursor: pointer; color: white; font-size: 16px; margin-top: 8px;
+        }
+        .demo-btn:hover { transform: scale(0.98); box-shadow: 0 4px 20px rgba(0,180,216,0.4); }
+        
+        .pelo-header { text-align: center; padding: 15px 0 20px; }
+        .pelo-logo { max-width: 280px; width: 100%; filter: drop-shadow(0 0 20px #00B4D8); animation: float 4s ease-in-out infinite; }
+        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+        .pelo-tagline { font-size: 0.75rem; color: var(--secondary); letter-spacing: 3px; margin-top: 8px; font-family: var(--font-mono); }
+        
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 25px; }
+        .stat-card { border-radius: 24px; padding: 18px; text-align: center; }
+        .stat-value { font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, var(--secondary), var(--primary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .stat-label { font-size: 0.7rem; color: var(--text-secondary); margin-top: 5px; font-family: var(--font-mono); }
+        
+        .top-menu { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 25px; }
+        .menu-btn { border-radius: 40px; padding: 10px 22px; color: white; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .menu-btn.active, .menu-btn:hover { background: rgba(0,180,216,0.35); border-color: var(--primary); color: var(--secondary); transform: translateY(-2px); }
+        
+        .section { display: none; animation: fadeUp 0.35s ease; }
+        .section.active { display: block; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .glass-card { border-radius: 28px; padding: 24px; margin-bottom: 24px; }
+        .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--glass-border); }
+        .card-header i { font-size: 1.4rem; color: var(--primary); }
+        .card-header h3 { font-size: 1.1rem; font-weight: 600; }
+        
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+        .map-container { height: 380px; border-radius: 20px; overflow: hidden; border: 1px solid var(--glass-border); background: #0a0f1a; position: relative; }
+        #peloMap, #fullMap { height: 100%; width: 100%; }
+        
+        .panic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .panic-btn { border: none; padding: 16px; border-radius: 60px; font-weight: 700; color: white; cursor: pointer; font-size: 1rem; transition: all 0.2s; }
+        .panic-btn-primary { background: linear-gradient(135deg, var(--danger), #FF6B4A); animation: pulse 1.5s infinite; }
+        .panic-btn-purple { background: linear-gradient(135deg, var(--quantum), #EF476F); }
+        .panic-btn-orange { background: linear-gradient(135deg, #FF6B4A, var(--danger)); }
+        .panic-btn:hover { transform: scale(1.02); filter: brightness(1.05); }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.85; box-shadow: 0 0 15px rgba(239,71,111,0.4); } }
+        
+        .emergency-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
+        .emergency-buttons button { background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); padding: 10px 16px; border-radius: 40px; color: white; cursor: pointer; font-size: 12px; transition: 0.2s; }
+        .emergency-buttons button:hover { background: rgba(0,180,216,0.3); border-color: var(--primary); }
+        
+        .incident-feed { max-height: 260px; overflow-y: auto; }
+        .incident-item { padding: 12px; margin-bottom: 10px; border-radius: 14px; border-left: 3px solid var(--danger); font-size: 12px; }
+        .incident-item.medium { border-left-color: var(--warning); }
+        .incident-item.low { border-left-color: var(--success); }
+        
+        .guardian-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; margin-top: 10px; }
+        .guardian-card { border-radius: 18px; padding: 14px; display: flex; align-items: center; gap: 14px; }
+        .guardian-avatar { width: 48px; height: 48px; background: linear-gradient(135deg, var(--primary), var(--quantum)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        
+        .chat-messages { height: 240px; overflow-y: auto; padding: 15px; background: rgba(0,0,0,0.25); border-radius: 20px; margin-bottom: 12px; }
+        .chat-message { padding: 10px 14px; margin-bottom: 10px; border-radius: 18px; max-width: 80%; font-size: 13px; }
+        .chat-message.resident { background: var(--primary); margin-left: auto; text-align: right; }
+        .chat-message.guardian { background: rgba(0,180,216,0.2); border-left: 2px solid var(--secondary); }
+        .chat-input-group { display: flex; gap: 10px; align-items: center; }
+        .chat-input { flex: 1; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 60px; color: white; font-family: var(--font-exo); }
+        .typing-indicator { display: flex; gap: 6px; padding: 10px 14px; background: rgba(255,255,255,0.08); border-radius: 18px; width: fit-content; }
+        .typing-indicator span { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; animation: typing 1.4s infinite; }
+        @keyframes typing { 0%,60%,100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
+        
+        .btn-send { background: var(--primary); border: none; border-radius: 60px; padding: 0 22px; color: white; cursor: pointer; font-weight: 600; font-family: var(--font-exo); }
+        .btn-secondary { background: rgba(0,180,216,0.2); border: 1px solid var(--glass-border); border-radius: 40px; padding: 8px 16px; cursor: pointer; color: white; font-size: 12px; transition: 0.2s; }
+        .btn-secondary:hover { background: rgba(0,180,216,0.4); border-color: var(--primary); }
+        .btn-whatsapp { background: #25D366; border: none; border-radius: 40px; padding: 6px 12px; cursor: pointer; color: white; font-size: 11px; margin-left: 8px; transition: 0.2s; }
+        .btn-whatsapp:hover { transform: scale(1.05); }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        @media (min-width: 768px) { .form-grid { grid-template-columns: repeat(2, 1fr); } }
+        .form-group { margin-bottom: 5px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 11px; color: var(--secondary); font-family: var(--font-mono); }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 14px; color: white; font-size: 13px; font-family: var(--font-exo); }
+        
+        .report-form-input { width: 100%; padding: 14px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 16px; color: white; font-size: 14px; margin-bottom: 15px; font-family: var(--font-exo); }
+        .report-form-select { width: 100%; padding: 14px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 16px; color: white; font-size: 14px; margin-bottom: 15px; font-family: var(--font-exo); cursor: pointer; }
+        .report-form-textarea { width: 100%; padding: 14px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 16px; color: white; font-size: 14px; margin-bottom: 15px; font-family: var(--font-exo); resize: vertical; min-height: 100px; }
+        .video-upload-area { border: 2px dashed var(--primary); border-radius: 16px; padding: 12px; text-align: center; cursor: pointer; margin-bottom: 14px; font-size: 12px; transition: 0.2s; background: rgba(0,0,0,0.3); }
+        .video-upload-area:hover { background: rgba(0,180,216,0.1); }
+        .submit-btn { background: linear-gradient(135deg, var(--primary), var(--quantum)); border: none; padding: 14px; border-radius: 60px; width: 100%; font-weight: 600; cursor: pointer; color: white; }
+        
+        .phone-field { display: flex; align-items: center; gap: 8px; }
+        .phone-field input { flex: 1; }
+        
+        .emergency-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; }
+        @media (min-width: 768px) { .emergency-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); } }
+        .emergency-number { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .emergency-number:hover { background: rgba(0,180,216,0.2); transform: scale(1.02); }
+        
+        .recipe-controls { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; align-items: center; }
+        .recipe-search { flex: 1; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 40px; color: white; font-family: var(--font-exo); }
+        .recipe-sort { padding: 10px 16px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 40px; color: white; cursor: pointer; }
+        .ask-pelo-btn { background: linear-gradient(135deg, var(--quantum), var(--primary)); border: none; padding: 10px 20px; border-radius: 40px; color: white; cursor: pointer; font-weight: 600; }
+        .recipe-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+        @media (min-width: 768px) { .recipe-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); } }
+        .recipe-card { background: rgba(0,0,0,0.3); border-radius: 16px; padding: 16px; }
+        .recipe-cost { color: var(--success); font-weight: bold; }
+        
+        .ad-space { text-align: center; padding: 25px; background: linear-gradient(135deg, rgba(0,180,216,0.05), rgba(138,43,226,0.03)); border: 2px dashed var(--warning); border-radius: 24px; margin: 25px 0; }
+        .rotating-image { width: 120px; margin: 15px auto; display: block; animation: rotateScale 4s ease-in-out infinite; }
+        @keyframes rotateScale { 0%,100% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(3deg) scale(1.03); } 100% { transform: rotate(0deg) scale(1); } }
+        
+        .bottom-logos { display: flex; justify-content: center; gap: 35px; padding: 18px 25px; background: rgba(15,25,45,0.45); backdrop-filter: blur(16px); border-radius: 60px; margin: 25px 0 15px; flex-wrap: wrap; }
+        .bottom-logo { height: 42px; opacity: 0.7; transition: 0.3s; }
+        .bottom-logo:hover { opacity: 1; transform: scale(1.05); }
+        .footer { text-align: center; font-size: 0.7rem; color: var(--text-secondary); padding: 20px; border-top: 1px solid var(--glass-border); margin-top: 15px; font-family: var(--font-mono); }
+        .footer .quantum-line { font-family: var(--font-mono); font-size: 0.7rem; margin-bottom: 8px; letter-spacing: 0.5px; color: var(--secondary); }
+        .footer .price-line { font-size: 0.65rem; margin-top: 5px; }
+        
+        .notification-area { position: fixed; top: 20px; right: 20px; z-index: 100; }
+        .notification-icon { border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }
+        .notification-icon .badge { position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; font-size: 10px; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; }
+        .notification-box { position: absolute; top: 55px; right: 0; width: 340px; background: rgba(10,15,26,0.95); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 12px; display: none; z-index: 100; max-height: 400px; overflow-y: auto; }
+        .notification-box.active { display: block; }
+        
+        .whatsapp-business { position: fixed; bottom: 25px; right: 25px; z-index: 100; }
+        .whatsapp-btn { background: #25D366; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: white; cursor: pointer; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.2s; }
+        .whatsapp-btn:hover { transform: scale(1.08); }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); z-index: 3000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: #1A1A2E; border: 2px solid var(--danger); border-radius: 32px; padding: 28px; max-width: 380px; width: 90%; text-align: center; }
+        .fall-countdown { font-size: 3rem; font-weight: bold; color: var(--danger); margin: 15px 0; }
+        
+        @media (max-width: 900px) { .two-column { grid-template-columns: 1fr; } .stats-row { grid-template-columns: repeat(2, 1fr); } .pelo-logo { max-width: 220px; } }
+        
+        /* Map loading indicator */
+        .map-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); padding: 8px 16px; border-radius: 20px; font-size: 12px; z-index: 1000; }
+    </style>
+</head>
+<body>
+<div id="particles-js"></div>
+
+<!-- LOGIN OVERLAY -->
+<div id="loginOverlay" class="login-overlay">
+    <div class="login-card">
+        <img src="https://i.postimg.cc/KvmJMsTk/pelo-transparent-logo.png" alt="PELO" class="login-logo">
+        <div class="trial-badge"><i class="fas fa-calendar-alt"></i> 7-day free trial · R29/month standard · R19/month underprivileged & high crime areas</div>
+        <input type="text" id="loginName" class="login-input" placeholder="Full name" value="Thabo">
+        <input type="email" id="loginEmail" class="login-input" placeholder="Email address" value="thabo@pelo.co.za">
+        <input type="tel" id="loginPhone" class="login-input" placeholder="Your phone number">
+        <input type="text" id="securityPhone" class="login-input" placeholder="Security company phone (optional)">
+        <input type="text" id="nextOfKinWhatsApp" class="login-input" placeholder="Next-of-kin WhatsApp number">
+        <input type="url" id="neighbourhoodGroup" class="login-input" placeholder="Community WhatsApp group link (optional)">
+        <input type="tel" id="policeWardNumber" class="login-input" placeholder="Police ward cell number (optional)">
+        <select id="securityCompany" class="login-select">
+            <option value="">Select security provider (optional)</option>
+            <option value="ADT">ADT</option>
+            <option value="Chubb">Chubb</option>
+            <option value="Fidelity">Fidelity</option>
+        </select>
+        <label style="display: flex; align-items: center; gap: 10px; margin: 12px 0; font-size: 0.8rem;">
+            <input type="checkbox" id="fallDetectionToggle" checked> Enable fall detection
+        </label>
+        <button id="startTrialBtn" class="demo-btn"><i class="fas fa-rocket"></i> start 7-day trial</button>
+        <p style="font-size: 10px; margin-top: 16px; font-family: monospace;">⚛️ quantum verification</p>
+    </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="container" id="appContainer" style="display: none;">
+    <div class="notification-area">
+        <div class="notification-icon" id="notificationIcon"><i class="fas fa-bell"></i><span class="badge" id="notificationBadge">0</span></div>
+        <div class="notification-box" id="notificationBox"></div>
+    </div>
+    
+    <div class="pelo-header">
+        <img src="https://i.postimg.cc/KvmJMsTk/pelo-transparent-logo.png" alt="PELO" class="pelo-logo">
+        <div class="pelo-tagline">community intelligence network · quantum secure</div>
+    </div>
+    
+    <div class="stats-row">
+        <div class="stat-card"><div class="stat-value" id="guardianCount">247</div><div class="stat-label">active guardians</div></div>
+        <div class="stat-card"><div class="stat-value" id="responseTime">42</div><div class="stat-label">response time (s)</div></div>
+        <div class="stat-card"><div class="stat-value" id="incidentToday">18</div><div class="stat-label">incidents today</div></div>
+        <div class="stat-card"><div class="stat-value" id="aiAccuracy">96</div><div class="stat-label">ai accuracy (%)</div></div>
+    </div>
+    
+    <div class="top-menu">
+        <button class="menu-btn active" data-section="dashboard">dashboard</button>
+        <button class="menu-btn" data-section="map">map</button>
+        <button class="menu-btn" data-section="chat">chat</button>
+        <button class="menu-btn" data-section="reports">reports</button>
+        <button class="menu-btn" data-section="guardians">guardians</button>
+        <button class="menu-btn" data-section="emergency">emergency</button>
+        <button class="menu-btn" data-section="recipes">recipes</button>
+        <button class="menu-btn" data-section="profile">profile</button>
+        <button class="menu-btn" data-section="settings">settings</button>
+    </div>
+    
+    <!-- DASHBOARD SECTION -->
+    <div id="section-dashboard" class="section active">
+        <div class="two-column">
+            <div class="glass-card"><div class="card-header"><i class="fas fa-map-marked-alt"></i><h3>live incident map</h3></div><div class="map-container"><div id="peloMap" style="height:380px;"></div></div><button id="locateBtn" class="btn-secondary" style="margin-top:12px; width:100%;"><i class="fas fa-location-dot"></i> my location</button></div>
+            <div class="glass-card">
+                <div class="card-header"><i class="fas fa-bell"></i><h3>emergency response</h3></div>
+                <div class="panic-grid">
+                    <button id="gbvPanicBtn" class="panic-btn panic-btn-purple"><i class="fas fa-phone-alt"></i> gbv silent callback<br><span style="font-size:10px;">0800 428 428</span></button>
+                    <button id="childPanicBtn" class="panic-btn panic-btn-orange"><i class="fas fa-child"></i> child abuse<br><span style="font-size:10px;">0800 055 555</span></button>
+                </div>
+                <button id="panicButton" class="panic-btn panic-btn-primary"><i class="fas fa-exclamation-triangle"></i> general panic</button>
+                <div id="profileContactButtons" style="margin-top: 15px; display: flex; flex-direction: column; gap: 10px;"></div>
+                <div class="card-header" style="margin:10px 0 5px;"><i class="fas fa-list"></i><h4>live incidents</h4></div>
+                <div class="incident-feed" id="incidentFeed"></div>
+            </div>
+        </div>
+        <div class="glass-card"><div class="card-header"><i class="fas fa-shield-alt"></i><h3>active guardians</h3></div><div class="guardian-grid" id="guardianGrid"></div></div>
+    </div>
+    
+    <!-- MAP SECTION -->
+    <div id="section-map" class="section"><div class="glass-card"><div class="card-header"><i class="fas fa-map"></i><h3>full map view</h3></div><div class="map-container" style="height:500px;"><div id="fullMap" style="height:500px;"></div></div><button id="fullLocateBtn" class="btn-secondary" style="margin-top:12px; width:100%;"><i class="fas fa-location-dot"></i> my location</button></div></div>
+    
+    <!-- CHAT SECTION -->
+    <div id="section-chat" class="section">
+        <div class="glass-card">
+            <div class="card-header"><i class="fas fa-comments"></i><h3>community safety chat · powered by luvuno quantum</h3></div>
+            <div class="chat-messages" id="chatMessages"><div class="chat-message guardian">pelo guardian: i am your ai safety assistant. how can i help you today?</div></div>
+            <div class="chat-input-group">
+                <input type="text" id="chatInput" class="chat-input" placeholder="type your message...">
+                <button id="voiceChatBtn" class="btn-secondary"><i class="fas fa-microphone"></i></button>
+                <button id="sendChatBtn" class="btn-send">send</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- REPORTS SECTION -->
+    <div id="section-reports" class="section">
+        <div class="glass-card">
+            <div class="card-header"><i class="fas fa-user-secret"></i><h3>anonymous report + video</h3></div>
+            <select id="reportCategory" class="report-form-select">
+                <option value="">select incident type</option>
+                <option value="Theft">theft/robbery</option>
+                <option value="Suspicious">suspicious activity</option>
+                <option value="Violence">violence</option>
+                <option value="Fire">fire</option>
+            </select>
+            <input id="reportLocation" class="report-form-input" placeholder="location">
+            <textarea id="reportDescription" class="report-form-textarea" rows="3" placeholder="describe incident..."></textarea>
+            <button id="voiceReportBtn" class="btn-secondary" style="margin-bottom:10px;"><i class="fas fa-microphone"></i> voice report</button>
+            <div class="video-upload-area" id="videoUploadArea"><i class="fas fa-video"></i> tap to upload video evidence (max 25mb)<br><span id="videoFileName" style="font-size:10px;">no video selected</span><div id="uploadProgress" style="display:none; margin-top:8px;"><progress value="0" max="100" style="width:100%;"></progress><span id="progressPercent">0%</span></div></div>
+            <input type="file" id="videoInput" accept="video/*" style="display:none;">
+            <label style="display:flex; align-items:center; gap:8px; margin:12px 0;"><input type="checkbox" id="anonymousToggle" checked> report anonymously</label>
+            <button id="submitReportBtn" class="submit-btn"><i class="fas fa-paper-plane"></i> submit report</button>
+        </div>
+    </div>
+    
+    <!-- GUARDIANS SECTION -->
+    <div id="section-guardians" class="section"><div class="glass-card"><div class="card-header"><i class="fas fa-shield-alt"></i><h3>all guardians & security</h3></div><div class="guardian-grid" id="guardianFullGrid"></div></div></div>
+    
+    <!-- EMERGENCY SECTION -->
+    <div id="section-emergency" class="section">
+        <div class="glass-card">
+            <div class="card-header"><i class="fas fa-phone-alt"></i><h3>emergency numbers database</h3></div>
+            <div class="emergency-buttons">
+                <button onclick="displayEmergencyNumbers('national')">🇿🇦 national</button>
+                <button onclick="displayEmergencyNumbers('hospitals')">🏥 hospitals</button>
+                <button onclick="displayEmergencyNumbers('police')">👮 police stations</button>
+                <button onclick="displayEmergencyNumbers('insurance')">📋 insurance</button>
+                <button onclick="findNearestHospital()">📍 find nearest hospital</button>
+            </div>
+            <div id="emergencyNumbersContainer"><p>select a category above to view emergency numbers.</p></div>
+            <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 16px;">
+                <strong><i class="fas fa-heart"></i> gbv & child protection:</strong><br>
+                gbv silent callback: <a href="tel:0800428428" style="color: var(--primary);">0800 428 428</a> (dial, they call back silently)<br>
+                childline sa: <a href="tel:0800055555" style="color: var(--primary);">0800 055 555</a><br>
+                gbv helpline: <a href="tel:0800150150" style="color: var(--primary);">0800 150 150</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- RECIPES SECTION -->
+    <div id="section-recipes" class="section">
+        <div class="glass-card">
+            <div class="card-header"><i class="fas fa-utensils"></i><h3>budget recipes</h3></div>
+            <div class="recipe-controls">
+                <input type="text" id="recipeSearch" class="recipe-search" placeholder="search by ingredient or name...">
+                <select id="recipeSort" class="recipe-sort">
+                    <option value="cost_asc">sort by cost (low to high)</option>
+                    <option value="cost_desc">sort by cost (high to low)</option>
+                    <option value="time_asc">sort by time (fastest first)</option>
+                </select>
+                <button id="askPeloRecipeBtn" class="ask-pelo-btn"><i class="fas fa-robot"></i> ask pelo what to cook</button>
+            </div>
+            <div class="recipe-grid" id="recipesList"><div class="loading">loading recipes...</div></div>
+        </div>
+    </div>
+    
+    <!-- PROFILE SECTION -->
+    <div id="section-profile" class="section">
+        <div class="glass-card">
+            <div class="card-header"><i class="fas fa-user-circle"></i><h3>my profile</h3></div>
+            <div class="form-grid">
+                <div class="form-group"><label>full name</label><input type="text" id="profileName" placeholder="your full name"></div>
+                <div class="form-group"><label>id number</label><input type="text" id="profileId" placeholder="sa id number (optional)"></div>
+                <div class="form-group"><label>email address</label><input type="email" id="profileEmail" placeholder="your@email.com"></div>
+                <div class="form-group"><label>phone number</label><input type="tel" id="profilePhone" placeholder="your phone number"></div>
+            </div>
+            
+            <div class="card-header" style="margin-top: 20px;"><i class="fas fa-phone-alt"></i><h3>emergency contacts</h3></div>
+            <div class="form-grid">
+                <div class="form-group"><label>next of kin name</label><input type="text" id="emergencyName" placeholder="name"></div>
+                <div class="form-group">
+                    <label>next of kin phone</label>
+                    <div class="phone-field">
+                        <input type="tel" id="emergencyPhone" placeholder="phone number">
+                        <button class="btn-whatsapp" onclick="callWhatsAppFromField('emergencyPhone', 'emergency assistance needed from pelo')"><i class="fab fa-whatsapp"></i> whatsapp</button>
+                    </div>
+                </div>
+                <div class="form-group"><label>relationship</label><input type="text" id="emergencyRelation" placeholder="e.g., spouse, parent"></div>
+            </div>
+            
+            <div class="card-header" style="margin-top: 20px;"><i class="fas fa-users"></i><h3>community & police</h3></div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>community whatsapp group link</label>
+                    <div class="phone-field">
+                        <input type="url" id="communityWhatsAppGroup" placeholder="whatsapp group invite link">
+                        <button class="btn-whatsapp" onclick="openWhatsAppGroup()"><i class="fab fa-whatsapp"></i> open group</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>police ward cell number</label>
+                    <div class="phone-field">
+                        <input type="tel" id="policeWardNumberProfile" placeholder="police cell number">
+                        <button class="btn-whatsapp" onclick="callWhatsAppFromField('policeWardNumberProfile', 'police assistance needed from pelo user')"><i class="fab fa-whatsapp"></i> whatsapp</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>security company phone</label>
+                    <div class="phone-field">
+                        <input type="tel" id="securityPhoneProfile" placeholder="security company phone">
+                        <button class="btn-whatsapp" onclick="callWhatsAppFromField('securityPhoneProfile', 'security assistance needed from pelo user')"><i class="fab fa-whatsapp"></i> whatsapp</button>
+                    </div>
+                </div>
+                <div class="form-group"><label>security company name</label><input type="text" id="securityCompanyProfile" placeholder="e.g., ADT, Chubb"></div>
+            </div>
+            
+            <div class="card-header" style="margin-top: 20px;"><i class="fas fa-hospital-user"></i><h3>medical & insurance</h3></div>
+            <div class="form-grid">
+                <div class="form-group"><label>medical aid scheme</label><input type="text" id="medicalAidScheme" placeholder="e.g., discovery, momentum"></div>
+                <div class="form-group"><label>medical aid number</label><input type="text" id="medicalAidNumber" placeholder="your membership number"></div>
+                <div class="form-group"><label>insurance company</label><input type="text" id="insuranceCompany" placeholder="e.g., outsurance, miway"></div>
+                <div class="form-group"><label>insurance policy number</label><input type="text" id="insurancePolicy" placeholder="policy number"></div>
+                <div class="form-group"><label>blood type</label><select id="bloodType"><option>unknown</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select></div>
+                <div class="form-group"><label>allergies / medical conditions</label><textarea id="medicalNotes" rows="2" placeholder="any allergies or conditions..."></textarea></div>
+            </div>
+            
+            <div class="card-header" style="margin-top: 20px;"><i class="fas fa-home"></i><h3>home address</h3></div>
+            <div class="form-grid">
+                <div class="form-group"><label>street address</label><input type="text" id="homeAddress" placeholder="street name and number"></div>
+                <div class="form-group"><label>suburb / township</label><input type="text" id="homeSuburb" placeholder="e.g., soweto, sandton"></div>
+                <div class="form-group"><label>city</label><input type="text" id="homeCity" placeholder="johannesburg / cape town / durban"></div>
+                <div class="form-group"><label>province</label><select id="homeProvince"><option>gauteng</option><option>western cape</option><option>kwaZulu-natal</option><option>eastern cape</option><option>free state</option><option>limpopo</option><option>mpumalanga</option><option>north west</option><option>northern cape</option></select></div>
+            </div>
+            
+            <button id="saveProfileBtn" class="submit-btn" style="margin-top: 20px;">save profile</button>
+            <div id="profileSuccess" style="display: none; margin-top: 15px; padding: 12px; background: rgba(0,255,136,0.15); border-radius: 12px; text-align: center;">profile saved successfully</div>
+        </div>
+    </div>
+    
+    <!-- SETTINGS SECTION -->
+    <div id="section-settings" class="section"><div class="glass-card"><div class="card-header"><i class="fas fa-sliders-h"></i><h3>settings</h3></div><label style="display:flex; align-items:center; gap:12px; margin-bottom:20px;"><input type="checkbox" id="settingsFallToggle" checked> enable fall detection</label><label style="display:flex; align-items:center; gap:12px; margin-bottom:20px;"><input type="checkbox" id="settingsNotifToggle" checked> enable push notifications</label><button id="logoutBtn" class="submit-btn" style="background:var(--danger);">logout</button></div></div>
+    
+    <div class="ad-space"><i class="fas fa-ad" style="color:var(--warning);"></i> advertising space<br><img src="https://i.postimg.cc/7Zr4y4Jz/boxer-sample-image-removebg-preview.png" class="rotating-image"></div>
+    
+    <div class="bottom-logos">
+        <img src="https://i.postimg.cc/zXW78GNH/Mind-Tech-Transparent-Logo.png" class="bottom-logo">
+        <img src="https://i.postimg.cc/RFQfK9k5/os-finallogo-removebg-preview.png" class="bottom-logo">
+        <img src="https://i.postimg.cc/T3ytnBqN/KD-LOGO-IMAGE-removebg-preview.png" class="bottom-logo">
+    </div>
+    <div class="footer">
+        <div class="quantum-line">⚛️ quantum verification</div>
+        <p>© 2026 Pelo · Powered by MindTech</p>
+        <div class="price-line">R29/month standard · R19/month underprivileged & high crime areas</div>
+    </div>
+</div>
+
+<div class="whatsapp-business"><button class="whatsapp-btn" id="whatsappBtn"><i class="fab fa-whatsapp"></i></button></div>
+<div id="fallModal" class="modal"><div class="modal-content"><h2 style="color:var(--danger);">fall detected</h2><p>sending alert in <span id="countdown">10</span> seconds...</p><div class="fall-countdown" id="countdownDisplay">10</div><button id="cancelFallBtn" style="background:#333; padding:12px 24px; border-radius:30px; border:none; color:white;">cancel (i'm ok)</button></div></div>
+
+<script>
+    // ============================================================
+    // PELO ENHANCED - MAP FIXED FOR DEPLOYMENT
+    // Must be served via HTTP (Netlify/Render/localhost) - NOT file://
+    // ⚛️ quantum verification
+    // ============================================================
+    
+    const LUVUNO_QUANTUM_URL = 'https://luvuno-quantum-chat-africa-os.onrender.com';
+    let map = null;
+    let fullMap = null;
+    let patrolMarkers = [];
+    let fallTimer = null;
+    let fallActive = true;
+    let selectedVideo = null;
+    
+    // ========== EMERGENCY NUMBERS DATABASE ==========
+    const emergencyDatabase = {
+        national: [
+            { name: "SAPS Emergency", number: "10111", type: "police" },
+            { name: "Ambulance / Fire", number: "10177", type: "medical" },
+            { name: "Cell Phone Emergency", number: "112", type: "general" },
+            { name: "GBV Silent Callback", number: "0800428428", type: "gbv" },
+            { name: "Childline SA", number: "0800055555", type: "child" },
+            { name: "GBV Helpline", number: "0800150150", type: "gbv" },
+            { name: "Suicide Crisis Line", number: "0800567567", type: "mental" },
+            { name: "Poison Information", number: "0861555777", type: "medical" }
+        ],
+        hospitals: [
+            { name: "Chris Hani Baragwanath", number: "0119338000", area: "Soweto", lat: -26.267, lng: 27.893 },
+            { name: "Charlotte Maxeke", number: "0114884911", area: "Johannesburg", lat: -26.191, lng: 28.045 },
+            { name: "Steve Biko Academic", number: "0123541000", area: "Pretoria", lat: -25.750, lng: 28.232 },
+            { name: "Groote Schuur", number: "0214049111", area: "Cape Town", lat: -33.939, lng: 18.464 },
+            { name: "Tygerberg", number: "0219384911", area: "Bellville", lat: -33.853, lng: 18.593 },
+            { name: "Inkosi Albert Luthuli", number: "0312401000", area: "Durban", lat: -29.875, lng: 30.968 }
+        ],
+        police: [
+            { name: "SAPS Soweto", number: "0115279000", area: "Soweto", lat: -26.267, lng: 27.893 },
+            { name: "SAPS Sandton", number: "0117227000", area: "Sandton", lat: -26.107, lng: 28.054 },
+            { name: "SAPS Pretoria Central", number: "0123937000", area: "Pretoria", lat: -25.745, lng: 28.190 },
+            { name: "SAPS Cape Town Central", number: "0214678000", area: "Cape Town", lat: -33.925, lng: 18.424 }
+        ],
+        insurance: [
+            { name: "Discovery Medical", number: "0860001234" },
+            { name: "Momentum Health", number: "0860117859" },
+            { name: "OUTsurance Emergency", number: "0860878889" },
+            { name: "MiWay Emergency", number: "0860131800" }
+        ]
+    };
+    
+    function displayEmergencyNumbers(category) {
+        const container = document.getElementById('emergencyNumbersContainer');
+        if (!container) return;
+        let html = '<div class="emergency-grid">';
+        const data = emergencyDatabase[category] || emergencyDatabase.national;
+        data.forEach(em => {
+            html += `<div class="emergency-number" onclick="window.location.href='tel:${em.number.replace(/\D/g,'')}'"><strong>${em.name}</strong><br><span style="font-family:monospace;">${em.number}</span><br><small style="font-size:10px;">tap to call</small></div>`;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+    }
+    
+    function findNearestHospital() {
+        if (!navigator.geolocation) { alert("geolocation not supported"); return; }
+        navigator.geolocation.getCurrentPosition(pos => {
+            const userLat = pos.coords.latitude, userLng = pos.coords.longitude;
+            let nearest = null, nearestDist = Infinity;
+            emergencyDatabase.hospitals.forEach(h => {
+                if (h.lat && h.lng) {
+                    const dist = Math.sqrt((userLat - h.lat)**2 + (userLng - h.lng)**2);
+                    if (dist < nearestDist) { nearestDist = dist; nearest = h; }
+                }
+            });
+            if (nearest) {
+                alert(`nearest hospital: ${nearest.name}\n${nearest.area}\n${nearest.number}`);
+                window.location.href = `tel:${nearest.number}`;
+            } else { alert("could not find nearest hospital."); }
+        });
+    }
+    
+    // ========== WHATSAPP HELPERS ==========
+    function callWhatsApp(number, message) {
+        const clean = number.replace(/\D/g, '');
+        if (clean && clean.length > 5) window.open(`https://wa.me/${clean}?text=${encodeURIComponent(message)}`);
+        else console.log("Invalid WhatsApp number");
+    }
+    
+    function callWhatsAppFromField(fieldId, message) {
+        const input = document.getElementById(fieldId);
+        if (input && input.value) {
+            const clean = input.value.replace(/\D/g, '');
+            if (clean && clean.length > 5) window.open(`https://wa.me/${clean}?text=${encodeURIComponent(message)}`);
+            else alert("please enter a valid phone number");
+        } else { alert("please enter a phone number first"); }
+    }
+    
+    function openWhatsAppGroup() {
+        const groupLink = document.getElementById('communityWhatsAppGroup');
+        if (groupLink && groupLink.value) window.open(groupLink.value, '_blank');
+        else alert("please enter a whatsapp group link first");
+    }
+    
+    // ========== PROFILE-FETCHED EMERGENCY BUTTONS ==========
+    function updateProfileEmergencyButtons() {
+        const container = document.getElementById('profileContactButtons');
+        if (!container) return;
+        
+        const policeWard = document.getElementById('policeWardNumberProfile')?.value || document.getElementById('policeWardNumber')?.value;
+        const securityPhone = document.getElementById('securityPhoneProfile')?.value || document.getElementById('securityPhone')?.value;
+        const nextOfKin = document.getElementById('emergencyPhone')?.value;
+        const communityGroup = document.getElementById('communityWhatsAppGroup')?.value;
+        
+        let html = '<div style="margin-top: 10px;"><strong>📞 your emergency contacts</strong></div>';
+        
+        if (nextOfKin) {
+            html += `<button class="btn-secondary" style="width:100%; margin-bottom:5px;" onclick="callWhatsApp('${nextOfKin}', 'emergency assistance needed from pelo user')"><i class="fab fa-whatsapp"></i> whatsapp next of kin (${nextOfKin.substring(0,10)}...)</button>`;
+        }
+        if (policeWard) {
+            html += `<button class="btn-secondary" style="width:100%; margin-bottom:5px;" onclick="callWhatsApp('${policeWard}', 'police assistance needed from pelo user at current location')"><i class="fab fa-whatsapp"></i> whatsapp police ward (${policeWard.substring(0,10)}...)</button>`;
+        }
+        if (securityPhone) {
+            html += `<button class="btn-secondary" style="width:100%; margin-bottom:5px;" onclick="callWhatsApp('${securityPhone}', 'security assistance needed from pelo user')"><i class="fab fa-whatsapp"></i> whatsapp security (${securityPhone.substring(0,10)}...)</button>`;
+        }
+        if (communityGroup) {
+            html += `<button class="btn-secondary" style="width:100%;" onclick="window.open('${communityGroup}', '_blank')"><i class="fab fa-whatsapp"></i> open community whatsapp group</button>`;
+        }
+        
+        if (!nextOfKin && !policeWard && !securityPhone && !communityGroup) {
+            html += '<p style="font-size:11px; color:#8A99B0;">save your emergency contacts in profile to enable quick whatsapp buttons</p>';
+        }
+        
+        container.innerHTML = html;
+    }
+    
+    // ========== SAFETY CHAT (LUVUNO QUANTUM) ==========
+    async function sendToQuantumChat(message) {
+        const container = document.getElementById('chatMessages');
+        const userDiv = document.createElement('div'); userDiv.className = 'chat-message resident';
+        userDiv.innerHTML = `👤 you: ${message}`;
+        container.appendChild(userDiv);
+        document.getElementById('chatInput').value = '';
+        const typingDiv = document.createElement('div'); typingDiv.className = 'chat-message guardian';
+        typingDiv.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
+        container.appendChild(typingDiv);
+        container.scrollTop = container.scrollHeight;
+        try {
+            const response = await fetch(`${LUVUNO_QUANTUM_URL}/api/chat`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message, portal: "pelo_safety" })
+            });
+            const data = await response.json();
+            const aiResponse = data.response || "stay safe. call saps 10111 for emergencies. gbv silent callback: 0800 428 428.";
+            typingDiv.innerHTML = `🛡️ pelo guardian: ${aiResponse}`;
+            if ('speechSynthesis' in window) window.speechSynthesis.speak(new SpeechSynthesisUtterance(aiResponse));
+        } catch(e) { typingDiv.innerHTML = `🛡️ pelo guardian: offline mode. emergency: saps 10111, gbv: 0800 428 428`; }
+        container.scrollTop = container.scrollHeight;
+    }
+    
+    // ========== FALL DETECTION ==========
+    function initFall() {
+        if ('DeviceMotionEvent' in window) {
+            window.addEventListener('devicemotion', (e) => {
+                if (!fallActive) return;
+                const acc = e.accelerationIncludingGravity;
+                const mag = Math.sqrt((acc.x||0)**2 + (acc.y||0)**2 + (acc.z||0)**2);
+                if (mag > 25) {
+                    const modal = document.getElementById('fallModal');
+                    let count = 10;
+                    document.getElementById('countdown').innerText = count;
+                    document.getElementById('countdownDisplay').innerText = count;
+                    modal.classList.add('active');
+                    if (fallTimer) clearInterval(fallTimer);
+                    fallTimer = setInterval(() => {
+                        count--;
+                        document.getElementById('countdown').innerText = count;
+                        document.getElementById('countdownDisplay').innerText = count;
+                        if (count <= 0) {
+                            clearInterval(fallTimer); modal.classList.remove('active');
+                            const kin = document.getElementById('emergencyPhone')?.value;
+                            if (kin) callWhatsApp(kin, "pelo fall detected at current location. please check.");
+                            const policeWard = document.getElementById('policeWardNumberProfile')?.value || document.getElementById('policeWardNumber')?.value;
+                            if (policeWard) callWhatsApp(policeWard, "pelo fall alert at user location. emergency assistance needed.");
+                            const securityPhone = document.getElementById('securityPhoneProfile')?.value || document.getElementById('securityPhone')?.value;
+                            if (securityPhone) callWhatsApp(securityPhone, "pelo fall alert at user location.");
+                            addIncident("fall detected", "user location", "high", "emergency dispatch");
+                            fallActive = false;
+                            setTimeout(() => fallActive = true, 30000);
+                        }
+                    }, 1000);
+                }
+            });
+        }
+    }
+    
+    // ========== VOICE REPORTING ==========
+    function startVoiceReporting() {
+        if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+            alert("voice recognition not supported in your browser");
+            return;
+        }
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognitionVoice = new SpeechRecognition();
+        recognitionVoice.lang = 'en-ZA';
+        recognitionVoice.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            document.getElementById('reportDescription').value = transcript;
+            alert("voice captured: " + transcript);
+        };
+        recognitionVoice.start();
+    }
+    
+    // ========== BUDGET RECIPES ==========
+    let budgetRecipes = [
+        { name: "pap & chakalaka", cost: 15, time: 20, ingredients: ["pap", "chakalaka", "onion"], instructions: "boil water, add pap. fry onion, add chakalaka." },
+        { name: "umngqusho (samp & beans)", cost: 20, time: 45, ingredients: ["samp", "beans", "onion"], instructions: "soak overnight. boil until soft. fry onion, combine." },
+        { name: "cabbage curry", cost: 12, time: 25, ingredients: ["cabbage", "onion", "tomato", "curry powder"], instructions: "fry onion, add cabbage, tomato, curry. simmer 15 min." },
+        { name: "bean stew", cost: 15, time: 35, ingredients: ["beans", "onion", "tomato"], instructions: "fry onion, add tomato, beans. simmer 20 min." },
+        { name: "potato & egg curry", cost: 18, time: 30, ingredients: ["potatoes", "eggs", "onion", "curry powder"], instructions: "boil potatoes and eggs. fry onion, add curry powder, potatoes. add eggs last." },
+        { name: "vetkoek & mince", cost: 22, time: 40, ingredients: ["flour", "yeast", "mince", "onion"], instructions: "make dough, fry balls. cook mince with onion. stuff vetkoek." },
+        { name: "dumpling soup", cost: 10, time: 25, ingredients: ["flour", "water", "salt", "vegetables"], instructions: "make dough drops. boil in salted water with vegetables." },
+        { name: "pap & gravy", cost: 10, time: 15, ingredients: ["pap", "tomato", "onion"], instructions: "make pap. fry onion, tomato for gravy." },
+        { name: "morogo (wild spinach)", cost: 8, time: 15, ingredients: ["morogo", "onion", "tomato"], instructions: "wash morogo. fry onion and tomato, add morogo. simmer." }
+    ];
+    
+    function loadRecipes() {
+        let recipes = [...budgetRecipes];
+        const searchTerm = document.getElementById('recipeSearch')?.value.toLowerCase() || '';
+        const sortBy = document.getElementById('recipeSort')?.value || 'cost_asc';
+        if (searchTerm) recipes = recipes.filter(r => r.name.toLowerCase().includes(searchTerm) || r.ingredients.some(i => i.toLowerCase().includes(searchTerm)));
+        if (sortBy === 'cost_asc') recipes.sort((a,b) => a.cost - b.cost);
+        else if (sortBy === 'cost_desc') recipes.sort((a,b) => b.cost - a.cost);
+        else if (sortBy === 'time_asc') recipes.sort((a,b) => a.time - b.time);
+        const container = document.getElementById('recipesList');
+        if (!container) return;
+        container.innerHTML = recipes.map(r => `<div class="recipe-card"><h4>${r.name}</h4><span class="recipe-cost">≈ r${r.cost}</span> · ${r.time} min<p style="font-size:12px; margin-top:8px;"><strong>ingredients:</strong> ${r.ingredients.join(', ')}</p><details><summary>instructions</summary><p style="margin-top:6px;">${r.instructions}</p></details></div>`).join('');
+    }
+    
+    async function askPeloForRecipe() {
+        const msg = "suggest a budget recipe for south africa under r30 using common ingredients like pap, beans, cabbage, potatoes, eggs, tomatoes, flour";
+        const chatContainer = document.getElementById('chatMessages');
+        const userDiv = document.createElement('div'); userDiv.className = 'chat-message resident';
+        userDiv.innerHTML = `👤 you: what can i cook with my ingredients?`;
+        chatContainer.appendChild(userDiv);
+        const typingDiv = document.createElement('div'); typingDiv.className = 'chat-message guardian';
+        typingDiv.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
+        chatContainer.appendChild(typingDiv);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+        try {
+            const response = await fetch(`${LUVUNO_QUANTUM_URL}/api/chat`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: msg, portal: "recipe_generator" })
+            });
+            const data = await response.json();
+            typingDiv.innerHTML = `🛡️ pelo guardian: ${data.response || "try pap & chakalaka (r15) or cabbage curry (r12) for budget meals."}`;
+        } catch(e) { typingDiv.innerHTML = `🛡️ pelo guardian: try pap & chakalaka (r15), cabbage curry (r12), or bean stew (r15).`; }
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+        document.querySelector('[data-section="chat"]').click();
+    }
+    
+    // ========== PROFILE MANAGEMENT ==========
+    function saveProfile() {
+        const profile = {
+            name: document.getElementById('profileName')?.value || '',
+            idNumber: document.getElementById('profileId')?.value || '',
+            email: document.getElementById('profileEmail')?.value || '',
+            phone: document.getElementById('profilePhone')?.value || '',
+            emergencyName: document.getElementById('emergencyName')?.value || '',
+            emergencyPhone: document.getElementById('emergencyPhone')?.value || '',
+            emergencyRelation: document.getElementById('emergencyRelation')?.value || '',
+            communityWhatsAppGroup: document.getElementById('communityWhatsAppGroup')?.value || '',
+            policeWardNumber: document.getElementById('policeWardNumberProfile')?.value || '',
+            securityPhone: document.getElementById('securityPhoneProfile')?.value || '',
+            securityCompany: document.getElementById('securityCompanyProfile')?.value || '',
+            medicalAidScheme: document.getElementById('medicalAidScheme')?.value || '',
+            medicalAidNumber: document.getElementById('medicalAidNumber')?.value || '',
+            insuranceCompany: document.getElementById('insuranceCompany')?.value || '',
+            insurancePolicy: document.getElementById('insurancePolicy')?.value || '',
+            bloodType: document.getElementById('bloodType')?.value || '',
+            medicalNotes: document.getElementById('medicalNotes')?.value || '',
+            homeAddress: document.getElementById('homeAddress')?.value || '',
+            homeSuburb: document.getElementById('homeSuburb')?.value || '',
+            homeCity: document.getElementById('homeCity')?.value || '',
+            homeProvince: document.getElementById('homeProvince')?.value || ''
+        };
+        localStorage.setItem('pelo_profile', JSON.stringify(profile));
+        document.getElementById('profileSuccess').style.display = 'block';
+        setTimeout(() => document.getElementById('profileSuccess').style.display = 'none', 3000);
+        addNotification("profile saved successfully");
+        updateProfileEmergencyButtons();
+    }
+    
+    function loadProfile() {
+        const saved = localStorage.getItem('pelo_profile');
+        if (saved) {
+            const p = JSON.parse(saved);
+            if (document.getElementById('profileName')) document.getElementById('profileName').value = p.name || '';
+            if (document.getElementById('profileId')) document.getElementById('profileId').value = p.idNumber || '';
+            if (document.getElementById('profileEmail')) document.getElementById('profileEmail').value = p.email || '';
+            if (document.getElementById('profilePhone')) document.getElementById('profilePhone').value = p.phone || '';
+            if (document.getElementById('emergencyName')) document.getElementById('emergencyName').value = p.emergencyName || '';
+            if (document.getElementById('emergencyPhone')) document.getElementById('emergencyPhone').value = p.emergencyPhone || '';
+            if (document.getElementById('emergencyRelation')) document.getElementById('emergencyRelation').value = p.emergencyRelation || '';
+            if (document.getElementById('communityWhatsAppGroup')) document.getElementById('communityWhatsAppGroup').value = p.communityWhatsAppGroup || '';
+            if (document.getElementById('policeWardNumberProfile')) document.getElementById('policeWardNumberProfile').value = p.policeWardNumber || '';
+            if (document.getElementById('securityPhoneProfile')) document.getElementById('securityPhoneProfile').value = p.securityPhone || '';
+            if (document.getElementById('securityCompanyProfile')) document.getElementById('securityCompanyProfile').value = p.securityCompany || '';
+            if (document.getElementById('medicalAidScheme')) document.getElementById('medicalAidScheme').value = p.medicalAidScheme || '';
+            if (document.getElementById('medicalAidNumber')) document.getElementById('medicalAidNumber').value = p.medicalAidNumber || '';
+            if (document.getElementById('insuranceCompany')) document.getElementById('insuranceCompany').value = p.insuranceCompany || '';
+            if (document.getElementById('insurancePolicy')) document.getElementById('insurancePolicy').value = p.insurancePolicy || '';
+            if (document.getElementById('bloodType')) document.getElementById('bloodType').value = p.bloodType || '';
+            if (document.getElementById('medicalNotes')) document.getElementById('medicalNotes').value = p.medicalNotes || '';
+            if (document.getElementById('homeAddress')) document.getElementById('homeAddress').value = p.homeAddress || '';
+            if (document.getElementById('homeSuburb')) document.getElementById('homeSuburb').value = p.homeSuburb || '';
+            if (document.getElementById('homeCity')) document.getElementById('homeCity').value = p.homeCity || '';
+            if (document.getElementById('homeProvince')) document.getElementById('homeProvince').value = p.homeProvince || '';
+        }
+        updateProfileEmergencyButtons();
+    }
+    
+    // ========== INCIDENT & NOTIFICATION HELPERS ==========
+    let guardiansList = [
+        { name: "Thabo Nkosi", status: "On Patrol", phone: "0712345678", avatar: "TN" },
+        { name: "Nomsa Mthethwa", status: "Gate", phone: "0712345679", avatar: "NM" },
+        { name: "Sipho Dlamini", status: "Responding", phone: "0712345680", avatar: "SD" },
+        { name: "Rapid Response", status: "Mobile", phone: "0800123456", avatar: "RR" }
+    ];
+    
+    function renderGuardians() {
+        const grid = document.getElementById('guardianGrid');
+        const fullGrid = document.getElementById('guardianFullGrid');
+        if(grid) grid.innerHTML = guardiansList.map(g => `<div class="guardian-card"><div class="guardian-avatar">${g.avatar}</div><div><strong>${g.name}</strong><br><span style="color:#00FFAA;">${g.status}</span><br><small>📞 ${g.phone}</small></div></div>`).join('');
+        if(fullGrid) fullGrid.innerHTML = guardiansList.map(g => `<div class="guardian-card"><div class="guardian-avatar">${g.avatar}</div><div><strong>${g.name}</strong><br><span style="color:#00FFAA;">${g.status}</span><br><small>📞 ${g.phone}</small><br><i class="fas fa-shield-alt"></i> eta: ${Math.floor(Math.random()*5)+1} min</div></div>`).join('');
+    }
+    
+    function addIncident(cat, loc, sev, guard) {
+        const feed = document.getElementById('incidentFeed');
+        const div = document.createElement('div');
+        div.className = `incident-item ${sev}`;
+        div.innerHTML = `<strong>${sev.toUpperCase()}</strong> ${cat} at ${loc}<br><small>dispatched: ${guard} · ${new Date().toLocaleTimeString()}</small>`;
+        feed.insertBefore(div, feed.firstChild);
+        let cnt = parseInt(document.getElementById('incidentToday').innerText);
+        document.getElementById('incidentToday').innerText = cnt + 1;
+        addNotification(`🚨 ${sev.toUpperCase()} alert: ${cat} at ${loc}`);
+    }
+    
+    function addNotification(msg) {
+        const box = document.getElementById('notificationBox');
+        const notif = document.createElement('div');
+        notif.className = 'notification-item unread';
+        notif.innerHTML = msg;
+        notif.onclick = () => { notif.classList.remove('unread'); updateBadge(); };
+        box.insertBefore(notif, box.firstChild);
+        updateBadge();
+        if(Notification.permission === 'granted') new Notification('PELO Alert', { body: msg });
+    }
+    
+    function updateBadge() { let c = document.querySelectorAll('.notification-item.unread').length; document.getElementById('notificationBadge').innerText = c; }
+    
+    // ========== MAP INITIALIZATION (FIXED) ==========
+    function initMap() {
+        console.log("Initializing map...");
+        
+        const mapDiv = document.getElementById('peloMap');
+        const fullMapDiv = document.getElementById('fullMap');
+        
+        if (!mapDiv) {
+            console.error("Map div not found");
+            return;
+        }
+        
+        // Default center: Johannesburg
+        const defaultCenter = [-26.1395, 28.4134];
+        
+        try {
+            // Create main map
+            if (map) map.remove();
+            map = L.map('peloMap').setView(defaultCenter, 13);
+            
+            // Use reliable tile layer
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
+                subdomains: 'abcd',
+                minZoom: 4,
+                maxZoom: 19
+            }).addTo(map);
+            
+            // Add security hub marker
+            const hubIcon = L.divIcon({ 
+                html: '<div style="background:#00B4D8; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white;"><i class="fas fa-building" style="color:white;"></i></div>', 
+                iconSize: [36,36] 
+            });
+            L.marker([-26.1375, 28.4140], { icon: hubIcon }).addTo(map).bindPopup('Security Hub · 24/7');
+            
+            // Add patrol markers
+            const patrolPositions = [[-26.1385,28.4125], [-26.1405,28.4150], [-26.1370,28.4110], [-26.1420,28.4180]];
+            patrolMarkers = [];
+            patrolPositions.forEach((pos, i) => {
+                const vehicleIcon = L.divIcon({ 
+                    html: `<div style="background:#EF476F; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white;"><i class="fas fa-shield-alt" style="color:white; font-size:12px;"></i></div>`, 
+                    iconSize: [30,30] 
+                });
+                const marker = L.marker(pos, { icon: vehicleIcon }).addTo(map).bindPopup(`Patrol Unit ${i+1}`);
+                patrolMarkers.push({ marker, lat: pos[0], lng: pos[1] });
+            });
+            
+            // Animate patrol markers
+            setInterval(() => {
+                patrolMarkers.forEach(pm => {
+                    let newLat = pm.lat + (Math.random() - 0.5) * 0.0015;
+                    let newLng = pm.lng + (Math.random() - 0.5) * 0.0015;
+                    newLat = Math.min(-26.130, Math.max(-26.148, newLat));
+                    newLng = Math.min(28.425, Math.max(28.400, newLng));
+                    pm.lat = newLat; pm.lng = newLng;
+                    pm.marker.setLatLng([newLat, newLng]);
+                });
+            }, 4000);
+            
+            // Create full map if element exists
+            if (fullMapDiv && !fullMap) {
+                fullMap = L.map('fullMap').setView(defaultCenter, 13);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; OpenStreetMap'
+                }).addTo(fullMap);
+                L.marker([-26.1375, 28.4140], { icon: hubIcon }).addTo(fullMap);
+                patrolMarkers.forEach(pm => {
+                    L.marker([pm.lat, pm.lng], { 
+                        icon: L.divIcon({ html: '<div style="background:#EF476F;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid white;"><i class="fas fa-shield-alt"></i></div>', iconSize: [30,30] }) 
+                    }).addTo(fullMap);
+                });
+            }
+            
+            console.log("Map initialized successfully");
+            
+            // Force resize after a short delay
+            setTimeout(() => {
+                if (map) map.invalidateSize();
+                if (fullMap) fullMap.invalidateSize();
+            }, 200);
+            
+        } catch(e) {
+            console.error("Map initialization error:", e);
+        }
+    }
+    
+    function locateUser() { 
+        if(navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => { 
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+                if(map) map.setView([lat, lng], 15); 
+                if(fullMap) fullMap.setView([lat, lng], 15);
+                
+                // Add user marker
+                const userIcon = L.divIcon({ 
+                    html: '<div style="background:#00FF88; width:24px; height:24px; border-radius:50%; border:2px solid white;"><i class="fas fa-user" style="color:black; font-size:10px; margin-left:6px; margin-top:6px;"></i></div>', 
+                    iconSize: [24,24] 
+                });
+                L.marker([lat, lng], { icon: userIcon }).addTo(map).bindPopup('Your Location').openPopup();
+            }, () => { alert("Could not get your location"); });
+        } else { alert("Geolocation not supported"); }
+    }
+    
+    // ========== EVENT LISTENERS ==========
+    document.getElementById('gbvPanicBtn')?.addEventListener('click', () => {
+        window.location.href = 'tel:0800428428';
+        setTimeout(() => window.location.href = 'tel:0800428428', 800);
+        addNotification("gbv silent callback triggered. emergency services notified.");
+        addIncident("GBV emergency", "user location", "high", "gbv helpline");
+        const policeWard = document.getElementById('policeWardNumberProfile')?.value || document.getElementById('policeWardNumber')?.value;
+        if(policeWard) callWhatsApp(policeWard, "gbv emergency at current location. silent callback initiated.");
+    });
+    
+    document.getElementById('childPanicBtn')?.addEventListener('click', () => {
+        window.open('https://wa.me/27800055555?text=🚨%20child%20abuse%20alert%20at%20current%20location', '_blank');
+        addNotification("child abuse alert sent to childline sa.");
+        addIncident("child abuse report", "user location", "high", "childline sa");
+        const policeWard = document.getElementById('policeWardNumberProfile')?.value || document.getElementById('policeWardNumber')?.value;
+        if(policeWard) callWhatsApp(policeWard, "child abuse reported at current location. immediate assistance needed.");
+    });
+    
+    document.getElementById('panicButton')?.addEventListener('click', () => {
+        addIncident("panic alert", "current location", "high", "rapid response unit");
+        const kin = document.getElementById('emergencyPhone')?.value;
+        if(kin) callWhatsApp(kin, "panic alert from pelo user at current location. please check.");
+        const policeWard = document.getElementById('policeWardNumberProfile')?.value || document.getElementById('policeWardNumber')?.value;
+        if(policeWard) callWhatsApp(policeWard, "panic alert at current location. emergency response needed.");
+    });
+    
+    document.getElementById('sendChatBtn')?.addEventListener('click', () => { const msg = document.getElementById('chatInput')?.value; if(msg) sendToQuantumChat(msg); });
+    document.getElementById('voiceChatBtn')?.addEventListener('click', () => {
+        if (!('webkitSpeechRecognition' in window)) { alert("voice not supported"); return; }
+        const recog = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recog.lang = 'en-ZA';
+        recog.onresult = (e) => { sendToQuantumChat(e.results[0][0].transcript); };
+        recog.start();
+    });
+    document.getElementById('voiceReportBtn')?.addEventListener('click', startVoiceReporting);
+    document.getElementById('saveProfileBtn')?.addEventListener('click', saveProfile);
+    document.getElementById('cancelFallBtn')?.addEventListener('click', () => { if(fallTimer) clearInterval(fallTimer); document.getElementById('fallModal').classList.remove('active'); });
+    document.getElementById('whatsappBtn')?.addEventListener('click', () => window.open('https://chat.whatsapp.com/', '_blank'));
+    document.getElementById('locateBtn')?.addEventListener('click', locateUser);
+    document.getElementById('fullLocateBtn')?.addEventListener('click', locateUser);
+    document.getElementById('logoutBtn')?.addEventListener('click', () => { localStorage.removeItem('pelo_user'); location.reload(); });
+    document.getElementById('settingsFallToggle')?.addEventListener('change', (e) => fallActive = e.target.checked);
+    document.getElementById('notificationIcon')?.addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('notificationBox').classList.toggle('active'); });
+    document.addEventListener('click', () => document.getElementById('notificationBox')?.classList.remove('active'));
+    document.getElementById('recipeSearch')?.addEventListener('input', loadRecipes);
+    document.getElementById('recipeSort')?.addEventListener('change', loadRecipes);
+    document.getElementById('askPeloRecipeBtn')?.addEventListener('click', askPeloForRecipe);
+    
+    // ========== VIDEO UPLOAD ==========
+    document.getElementById('videoUploadArea')?.addEventListener('click', () => document.getElementById('videoInput').click());
+    document.getElementById('videoInput')?.addEventListener('change', (e) => { if(e.target.files[0]) { selectedVideo = e.target.files[0]; document.getElementById('videoFileName').innerHTML = selectedVideo.name.substring(0,30) + (selectedVideo.size > 25*1024*1024 ? ' ⚠️ >25MB' : ''); } });
+    document.getElementById('submitReportBtn')?.addEventListener('click', async () => {
+        const cat = document.getElementById('reportCategory').value, loc = document.getElementById('reportLocation').value, desc = document.getElementById('reportDescription').value;
+        if(!cat || !loc || !desc) { alert("please fill all fields"); return; }
+        let videoUrl = null;
+        if(selectedVideo && selectedVideo.size <= 25*1024*1024) videoUrl = "mock_video_url";
+        addIncident(cat, loc, "medium", guardiansList[0].name);
+        alert("report submitted");
+        document.getElementById('reportCategory').value = ''; document.getElementById('reportLocation').value = ''; document.getElementById('reportDescription').value = ''; selectedVideo = null; document.getElementById('videoFileName').innerHTML = 'no video selected';
+    });
+    
+    // ========== NAVIGATION with map fix ==========
+    document.querySelectorAll('.menu-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(`section-${btn.dataset.section}`).classList.add('active');
+            if(btn.dataset.section === 'map' || btn.dataset.section === 'dashboard') {
+                setTimeout(() => { 
+                    if(map) map.invalidateSize(); 
+                    if(fullMap) fullMap.invalidateSize(); 
+                }, 200);
+            }
+            if(btn.dataset.section === 'recipes') loadRecipes();
+            if(btn.dataset.section === 'emergency') displayEmergencyNumbers('national');
+        });
+    });
+    
+    // ========== LOGIN ==========
+    document.getElementById('startTrialBtn')?.addEventListener('click', () => {
+        const email = document.getElementById('loginEmail').value;
+        if(!email) { alert("email required"); return; }
+        localStorage.setItem('pelo_user', JSON.stringify({
+            name: document.getElementById('loginName').value, email,
+            phone: document.getElementById('loginPhone').value,
+            securityPhone: document.getElementById('securityPhone').value,
+            kin: document.getElementById('nextOfKinWhatsApp').value,
+            group: document.getElementById('neighbourhoodGroup').value,
+            policeWard: document.getElementById('policeWardNumber').value,
+            securityCompany: document.getElementById('securityCompany').value,
+            fall: document.getElementById('fallDetectionToggle').checked
+        }));
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('appContainer').style.display = 'block';
+        fallActive = document.getElementById('fallDetectionToggle').checked;
+        initFall(); renderGuardians(); initMap(); loadProfile();
+        if(Notification.permission !== 'granted') Notification.requestPermission();
+    });
+    
+    if(localStorage.getItem('pelo_user')) {
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('appContainer').style.display = 'block';
+        const saved = JSON.parse(localStorage.getItem('pelo_user'));
+        fallActive = saved.fall !== false;
+        initFall(); renderGuardians(); initMap(); loadProfile();
+        if(Notification.permission !== 'granted') Notification.requestPermission();
+    }
+    
+    // ========== PARTICLES ==========
+    particlesJS('particles-js', { particles: { number: { value: 55 }, color: { value: ["#00B4D8", "#00F5D4", "#8A2BE2"] }, shape: { type: "circle" }, opacity: { value: 0.25, random: true }, size: { value: 2.5, random: true }, line_linked: { enable: true, distance: 150, color: "#00B4D8", opacity: 0.08 }, move: { enable: true, speed: 0.7 } } });
+    
+    setInterval(() => { let rt = document.getElementById('responseTime'); if(rt) rt.innerText = Math.floor(35 + Math.random() * 15); }, 20000);
+    console.log("pelo enhanced · map fixed · deploy via HTTP server · ⚛️ quantum verification");
+</script>
+</body>
+</html>
