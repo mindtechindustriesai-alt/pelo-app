@@ -447,10 +447,11 @@
 <script>
     // ============================================================
     // PELO ENHANCED - ROBUST PRODUCTION VERSION
+    // Uses Luvuno Backend Proxy (CORS fixed)
     // ⚛️ quantum verification | CHSH S=2.76
     // ============================================================
     
-    const LUVUNO_QUANTUM_URL = 'https://luvuno-quantum-chat-africa-os.onrender.com';
+    const LUVUNO_BACKEND_URL = 'https://luvuno-backend-proxy.onrender.com';
     let map = null;
     let fullMap = null;
     let patrolMarkers = [];
@@ -576,7 +577,7 @@
         container.innerHTML = html;
     }
     
-    // ========== SAFETY CHAT (LUVUNO QUANTUM) ==========
+    // ========== SAFETY CHAT (LUVUNO BACKEND PROXY) ==========
     async function sendToSafetyChat(message) {
         const container = document.getElementById('chatMessages');
         const userDiv = document.createElement('div');
@@ -593,15 +594,23 @@
         
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            const timeoutId = setTimeout(() => controller.abort(), 20000);
             
-            const response = await fetch(`${LUVUNO_QUANTUM_URL}/api/chat`, {
+            const response = await fetch(`${LUVUNO_BACKEND_URL}/api/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: message, portal: "pelo_safety" }),
+                body: JSON.stringify({ 
+                    message: message, 
+                    portal: "pelo_safety",
+                    system: "standard"
+                }),
                 signal: controller.signal
             });
             clearTimeout(timeoutId);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
             
             const data = await response.json();
             const aiResponse = data.response || "stay safe. call saps 10111 for emergencies. gbv silent callback: 0800 428 428.";
@@ -613,6 +622,7 @@
                 window.speechSynthesis.speak(utterance);
             }
         } catch (error) {
+            console.error("Chat error:", error);
             typingDiv.innerHTML = `🛡️ pelo guardian: emergency: saps 10111 | gbv silent callback: 0800 428 428 | childline: 0800 055 555. stay safe.`;
         }
         container.scrollTop = container.scrollHeight;
@@ -634,12 +644,16 @@
         
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            const timeoutId = setTimeout(() => controller.abort(), 20000);
             
-            const response = await fetch(`${LUVUNO_QUANTUM_URL}/api/chat`, {
+            const response = await fetch(`${LUVUNO_BACKEND_URL}/api/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: message, portal: "recipe_generator" }),
+                body: JSON.stringify({ 
+                    message: message, 
+                    portal: "recipe_generator",
+                    system: "standard"
+                }),
                 signal: controller.signal
             });
             clearTimeout(timeoutId);
@@ -648,10 +662,10 @@
             const aiResponse = data.response || "try pap & chakalaka (r15), cabbage curry (r12), or bean stew (r15) for budget meals.";
             typingDiv.innerHTML = `🛡️ pelo guardian: ${aiResponse}`;
         } catch (error) {
+            console.error("Recipe error:", error);
             typingDiv.innerHTML = `🛡️ pelo guardian: try pap & chakalaka (r15), cabbage curry (r12), or bean stew (r15).`;
         }
         chatContainer.scrollTop = chatContainer.scrollHeight;
-        // Switch to chat tab to show response
         document.querySelector('[data-section="chat"]').click();
     }
     
@@ -1004,7 +1018,7 @@
     particlesJS('particles-js', { particles: { number: { value: 55 }, color: { value: ["#00B4D8", "#00F5D4", "#8A2BE2"] }, shape: { type: "circle" }, opacity: { value: 0.25, random: true }, size: { value: 2.5, random: true }, line_linked: { enable: true, distance: 150, color: "#00B4D8", opacity: 0.08 }, move: { enable: true, speed: 0.7 } } });
     
     setInterval(() => { let rt = document.getElementById('responseTime'); if(rt) rt.innerText = Math.floor(35 + Math.random() * 15); }, 20000);
-    console.log("pelo enhanced · robust production · ⚛️ quantum verification");
+    console.log("pelo enhanced · using luvuno backend proxy · ⚛️ quantum verification");
 </script>
 </body>
 </html>
