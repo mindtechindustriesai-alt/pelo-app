@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -55,15 +55,26 @@
         .login-card {
             background: rgba(8, 16, 28, 0.9); backdrop-filter: blur(24px);
             border-radius: 48px; padding: 35px 32px; text-align: center;
-            max-width: 520px; width: 100%; border: 1px solid rgba(0, 180, 216, 0.4);
+            max-width: 560px; width: 100%; border: 1px solid rgba(0, 180, 216, 0.4);
             box-shadow: 0 25px 45px rgba(0,0,0,0.4), 0 0 35px rgba(0,180,216,0.15);
+            max-height: 90vh;
+            overflow-y: auto;
         }
         .login-logo { max-width: 260px; width: 100%; filter: drop-shadow(0 0 18px #00B4D8); margin-bottom: 15px; }
         .trial-badge { background: rgba(0,255,136,0.12); border: 1px solid var(--success); border-radius: 60px; padding: 6px 18px; display: inline-block; margin-bottom: 20px; font-size: 12px; }
-        .login-input, .login-select {
+        .login-input, .login-select, .login-textarea {
             width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border);
             border-radius: 60px; padding: 12px 18px; color: white; margin-bottom: 12px; font-size: 14px;
+            font-family: var(--font-exo);
         }
+        .login-textarea { border-radius: 16px; resize: vertical; min-height: 60px; }
+        .login-section-title { 
+            font-size: 13px; font-weight: 600; color: var(--secondary); 
+            margin: 18px 0 10px; text-align: left; border-bottom: 1px solid var(--glass-border); 
+            padding-bottom: 8px; font-family: var(--font-mono);
+        }
+        .address-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        @media (max-width: 480px) { .address-row { grid-template-columns: 1fr; } }
         .demo-btn {
             background: linear-gradient(135deg, var(--quantum), var(--primary));
             border: none; padding: 14px; border-radius: 60px; font-weight: 700;
@@ -191,7 +202,14 @@
         .modal-content { background: #1A1A2E; border: 2px solid var(--danger); border-radius: 32px; padding: 28px; max-width: 380px; width: 90%; text-align: center; }
         .fall-countdown { font-size: 3rem; font-weight: bold; color: var(--danger); margin: 15px 0; }
         
+        /* Address chips */
+        .address-chip { display: inline-block; background: rgba(0,180,216,0.15); border: 1px solid var(--primary); border-radius: 40px; padding: 3px 12px; font-size: 10px; color: var(--secondary); margin: 2px 4px; }
+        .location-status { display: inline-block; padding: 4px 12px; border-radius: 40px; font-size: 10px; font-family: var(--font-mono); }
+        .location-status.known { background: rgba(0,255,136,0.15); color: var(--success); }
+        .location-status.unknown { background: rgba(255,166,0,0.15); color: var(--warning); }
+        
         @media (max-width: 900px) { .two-column { grid-template-columns: 1fr; } .stats-row { grid-template-columns: repeat(2, 1fr); } .pelo-logo { max-width: 220px; } }
+        @media (max-width: 480px) { .login-card { padding: 20px 16px; } .address-row { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -202,9 +220,72 @@
     <div class="login-card">
         <img src="https://i.postimg.cc/KvmJMsTk/pelo-transparent-logo.png" alt="PELO" class="login-logo">
         <div class="trial-badge"><i class="fas fa-calendar-alt"></i> 7-day free trial · R29/month standard · R19/month underprivileged and high crime areas</div>
+        
         <input type="text" id="loginName" class="login-input" placeholder="Full name" value="Thabo">
         <input type="email" id="loginEmail" class="login-input" placeholder="Email address" value="thabo@pelo.co.za">
         <input type="tel" id="loginPhone" class="login-input" placeholder="Your phone number" value="0712345678">
+        
+        <div class="login-section-title"><i class="fas fa-home"></i> Primary Address (Home)</div>
+        <div class="address-row">
+            <input type="text" id="homeAddress" class="login-input" placeholder="Street address" value="123 Main St">
+            <input type="text" id="homeSuburb" class="login-input" placeholder="Suburb / Township" value="Soweto">
+        </div>
+        <div class="address-row">
+            <input type="text" id="homeCity" class="login-input" placeholder="City" value="Johannesburg">
+            <select id="homeProvince" class="login-select">
+                <option value="Gauteng" selected>Gauteng</option>
+                <option value="Western Cape">Western Cape</option>
+                <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+                <option value="Eastern Cape">Eastern Cape</option>
+                <option value="Free State">Free State</option>
+                <option value="Limpopo">Limpopo</option>
+                <option value="Mpumalanga">Mpumalanga</option>
+                <option value="North West">North West</option>
+                <option value="Northern Cape">Northern Cape</option>
+            </select>
+        </div>
+        
+        <div class="login-section-title"><i class="fas fa-briefcase"></i> Secondary Address (Work / School)</div>
+        <div class="address-row">
+            <input type="text" id="workAddress" class="login-input" placeholder="Street address" value="456 Business Park">
+            <input type="text" id="workSuburb" class="login-input" placeholder="Suburb / Township" value="Sandton">
+        </div>
+        <div class="address-row">
+            <input type="text" id="workCity" class="login-input" placeholder="City" value="Johannesburg">
+            <select id="workProvince" class="login-select">
+                <option value="Gauteng" selected>Gauteng</option>
+                <option value="Western Cape">Western Cape</option>
+                <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+                <option value="Eastern Cape">Eastern Cape</option>
+                <option value="Free State">Free State</option>
+                <option value="Limpopo">Limpopo</option>
+                <option value="Mpumalanga">Mpumalanga</option>
+                <option value="North West">North West</option>
+                <option value="Northern Cape">Northern Cape</option>
+            </select>
+        </div>
+        
+        <div class="login-section-title"><i class="fas fa-map-pin"></i> Third Address (Regular Visit — Family / Gym / Shop)</div>
+        <div class="address-row">
+            <input type="text" id="thirdAddress" class="login-input" placeholder="Street address" value="789 Mall Rd">
+            <input type="text" id="thirdSuburb" class="login-input" placeholder="Suburb / Township" value="Midrand">
+        </div>
+        <div class="address-row">
+            <input type="text" id="thirdCity" class="login-input" placeholder="City" value="Johannesburg">
+            <select id="thirdProvince" class="login-select">
+                <option value="Gauteng" selected>Gauteng</option>
+                <option value="Western Cape">Western Cape</option>
+                <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+                <option value="Eastern Cape">Eastern Cape</option>
+                <option value="Free State">Free State</option>
+                <option value="Limpopo">Limpopo</option>
+                <option value="Mpumalanga">Mpumalanga</option>
+                <option value="North West">North West</option>
+                <option value="Northern Cape">Northern Cape</option>
+            </select>
+        </div>
+        
+        <div class="login-section-title"><i class="fas fa-shield-alt"></i> Emergency & Security Contacts</div>
         <input type="text" id="securityPhone" class="login-input" placeholder="Security company phone (optional)" value="0800123456">
         <input type="text" id="nextOfKinWhatsApp" class="login-input" placeholder="Next-of-kin WhatsApp number" value="0712345679">
         <input type="url" id="neighbourhoodGroup" class="login-input" placeholder="Community WhatsApp group link (optional)">
@@ -215,11 +296,16 @@
             <option value="Chubb">Chubb</option>
             <option value="Fidelity">Fidelity</option>
         </select>
+        
         <label style="display: flex; align-items: center; gap: 10px; margin: 12px 0; font-size: 0.8rem;">
             <input type="checkbox" id="fallDetectionToggle" checked> Enable fall detection
         </label>
+        <label style="display: flex; align-items: center; gap: 10px; margin: 12px 0; font-size: 0.8rem;">
+            <input type="checkbox" id="gpsAutoUpdateToggle" checked> Enable GPS auto-update for unknown locations
+        </label>
+        
         <button id="startTrialBtn" class="demo-btn"><i class="fas fa-rocket"></i> start 7-day trial</button>
-        <p style="font-size: 10px; margin-top: 16px; font-family: monospace;">quantum verification</p>
+        <p style="font-size: 10px; margin-top: 16px; font-family: monospace;">quantum verification · location-based safety</p>
     </div>
 </div>
 
@@ -362,6 +448,30 @@
                 <div class="form-group"><label>phone number</label><input type="tel" id="profilePhone" placeholder="your phone number"></div>
             </div>
             
+            <div class="card-header" style="margin-top: 20px;"><i class="fas fa-home"></i><h3>primary address (home)</h3></div>
+            <div class="form-grid">
+                <div class="form-group"><label>street address</label><input type="text" id="profileHomeAddress" placeholder="street name and number"></div>
+                <div class="form-group"><label>suburb / township</label><input type="text" id="profileHomeSuburb" placeholder="e.g., soweto, sandton"></div>
+                <div class="form-group"><label>city</label><input type="text" id="profileHomeCity" placeholder="johannesburg / cape town / durban"></div>
+                <div class="form-group"><label>province</label><select id="profileHomeProvince"><option value="Gauteng">Gauteng</option><option value="Western Cape">Western Cape</option><option value="KwaZulu-Natal">KwaZulu-Natal</option><option value="Eastern Cape">Eastern Cape</option><option value="Free State">Free State</option><option value="Limpopo">Limpopo</option><option value="Mpumalanga">Mpumalanga</option><option value="North West">North West</option><option value="Northern Cape">Northern Cape</option></select></div>
+            </div>
+            
+            <div class="card-header" style="margin-top: 20px;"><i class="fas fa-briefcase"></i><h3>secondary address (work / school)</h3></div>
+            <div class="form-grid">
+                <div class="form-group"><label>street address</label><input type="text" id="profileWorkAddress" placeholder="work street address"></div>
+                <div class="form-group"><label>suburb / township</label><input type="text" id="profileWorkSuburb" placeholder="work suburb"></div>
+                <div class="form-group"><label>city</label><input type="text" id="profileWorkCity" placeholder="work city"></div>
+                <div class="form-group"><label>province</label><select id="profileWorkProvince"><option value="Gauteng">Gauteng</option><option value="Western Cape">Western Cape</option><option value="KwaZulu-Natal">KwaZulu-Natal</option><option value="Eastern Cape">Eastern Cape</option><option value="Free State">Free State</option><option value="Limpopo">Limpopo</option><option value="Mpumalanga">Mpumalanga</option><option value="North West">North West</option><option value="Northern Cape">Northern Cape</option></select></div>
+            </div>
+            
+            <div class="card-header" style="margin-top: 20px;"><i class="fas fa-map-pin"></i><h3>third address (regular visit)</h3></div>
+            <div class="form-grid">
+                <div class="form-group"><label>street address</label><input type="text" id="profileThirdAddress" placeholder="third address"></div>
+                <div class="form-group"><label>suburb / township</label><input type="text" id="profileThirdSuburb" placeholder="third suburb"></div>
+                <div class="form-group"><label>city</label><input type="text" id="profileThirdCity" placeholder="third city"></div>
+                <div class="form-group"><label>province</label><select id="profileThirdProvince"><option value="Gauteng">Gauteng</option><option value="Western Cape">Western Cape</option><option value="KwaZulu-Natal">KwaZulu-Natal</option><option value="Eastern Cape">Eastern Cape</option><option value="Free State">Free State</option><option value="Limpopo">Limpopo</option><option value="Mpumalanga">Mpumalanga</option><option value="North West">North West</option><option value="Northern Cape">Northern Cape</option></select></div>
+            </div>
+            
             <div class="card-header" style="margin-top: 20px;"><i class="fas fa-phone-alt"></i><h3>emergency contacts</h3></div>
             <div class="form-grid">
                 <div class="form-group"><label>next of kin name</label><input type="text" id="emergencyName" placeholder="name"></div>
@@ -411,12 +521,14 @@
                 <div class="form-group"><label>allergies / medical conditions</label><textarea id="medicalNotes" rows="2" placeholder="any allergies or conditions..."></textarea></div>
             </div>
             
-            <div class="card-header" style="margin-top: 20px;"><i class="fas fa-home"></i><h3>home address</h3></div>
+            <div class="card-header" style="margin-top: 20px;"><i class="fas fa-globe"></i><h3>gps auto-update settings</h3></div>
             <div class="form-grid">
-                <div class="form-group"><label>street address</label><input type="text" id="homeAddress" placeholder="street name and number"></div>
-                <div class="form-group"><label>suburb / township</label><input type="text" id="homeSuburb" placeholder="e.g., soweto, sandton"></div>
-                <div class="form-group"><label>city</label><input type="text" id="homeCity" placeholder="johannesburg / cape town / durban"></div>
-                <div class="form-group"><label>province</label><select id="homeProvince"><option>gauteng</option><option>western cape</option><option>kwaZulu-natal</option><option>eastern cape</option><option>free state</option><option>limpopo</option><option>mpumalanga</option><option>north west</option><option>northern cape</option></select></div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="gpsAutoUpdateToggleProfile" checked> Enable GPS auto-update for unknown locations
+                    </label>
+                    <p style="font-size: 10px; color: var(--text-secondary); margin-top: 4px;">When you're outside your saved addresses, PELO will automatically detect your location and update guardians.</p>
+                </div>
             </div>
             
             <button id="saveProfileBtn" class="submit-btn" style="margin-top: 20px;">save profile</button>
@@ -446,9 +558,8 @@
 
 <script>
     // ============================================================
-    // PELO - SAFETY FIRST COMMUNITY NETWORK
-    // No directional advice. Only verified safety information.
-    // Emergency contacts only. No AI hallucinations.
+    // PELO - ENHANCED ADDRESS MANAGEMENT WITH GPS AUTO-UPDATE
+    // Safety first. No directional advice. Emergency contacts only.
     // ============================================================
     
     const LUVUNO_BACKEND_URL = 'https://luvuno-backend-proxy.onrender.com';
@@ -458,6 +569,194 @@
     let fallTimer = null;
     let fallActive = true;
     let selectedVideo = null;
+    let currentLocation = null;
+    let gpsAutoUpdateEnabled = true;
+    let savedAddresses = [];
+    
+    // ========== GPS AUTO-UPDATE SYSTEM ==========
+    function initGPSAutoUpdate() {
+        if (!navigator.geolocation) {
+            console.log("Geolocation not supported");
+            return;
+        }
+        
+        // Check if GPS auto-update is enabled
+        const gpsToggle = document.getElementById('gpsAutoUpdateToggleProfile');
+        if (gpsToggle) {
+            gpsAutoUpdateEnabled = gpsToggle.checked;
+            gpsToggle.addEventListener('change', function() {
+                gpsAutoUpdateEnabled = this.checked;
+                if (gpsAutoUpdateEnabled) {
+                    startLocationTracking();
+                } else {
+                    stopLocationTracking();
+                }
+            });
+        }
+        
+        // Also check login toggle
+        const loginGpsToggle = document.getElementById('gpsAutoUpdateToggle');
+        if (loginGpsToggle) {
+            loginGpsToggle.addEventListener('change', function() {
+                gpsAutoUpdateEnabled = this.checked;
+            });
+        }
+        
+        // Start tracking if enabled
+        if (gpsAutoUpdateEnabled) {
+            startLocationTracking();
+        }
+    }
+    
+    let watchId = null;
+    
+    function startLocationTracking() {
+        if (watchId !== null) return;
+        if (!navigator.geolocation) return;
+        
+        watchId = navigator.geolocation.watchPosition(
+            handleLocationUpdate,
+            handleLocationError,
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+        );
+        console.log("GPS auto-update started");
+    }
+    
+    function stopLocationTracking() {
+        if (watchId !== null) {
+            navigator.geolocation.clearWatch(watchId);
+            watchId = null;
+            console.log("GPS auto-update stopped");
+        }
+    }
+    
+    function handleLocationUpdate(position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        currentLocation = { lat, lng };
+        
+        // Check if this location is known
+        const locationStatus = checkLocationStatus(lat, lng);
+        
+        // Update UI with location status
+        updateLocationStatus(locationStatus, lat, lng);
+        
+        // If location is unknown and auto-update is enabled, alert guardians
+        if (locationStatus === 'unknown' && gpsAutoUpdateEnabled) {
+            handleUnknownLocation(lat, lng);
+        }
+    }
+    
+    function handleLocationError(error) {
+        console.log("GPS error:", error.message);
+    }
+    
+    function checkLocationStatus(lat, lng) {
+        // Load saved addresses from profile
+        loadAddressesFromProfile();
+        
+        // Check if within 500m of any saved address
+        for (let addr of savedAddresses) {
+            if (addr.lat && addr.lng) {
+                const distance = calculateDistance(lat, lng, addr.lat, addr.lng);
+                if (distance < 0.5) { // 500 meters
+                    return 'known';
+                }
+            }
+        }
+        return 'unknown';
+    }
+    
+    function calculateDistance(lat1, lng1, lat2, lng2) {
+        const R = 6371; // Earth's radius in km
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLng/2) * Math.sin(dLng/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    }
+    
+    function loadAddressesFromProfile() {
+        const saved = localStorage.getItem('pelo_profile');
+        savedAddresses = [];
+        if (saved) {
+            const p = JSON.parse(saved);
+            // Primary address
+            if (p.homeAddress) {
+                savedAddresses.push({
+                    type: 'home',
+                    address: p.homeAddress,
+                    suburb: p.homeSuburb || '',
+                    city: p.homeCity || '',
+                    province: p.homeProvince || '',
+                    lat: p.homeLat || null,
+                    lng: p.homeLng || null
+                });
+            }
+            // Work address
+            if (p.workAddress) {
+                savedAddresses.push({
+                    type: 'work',
+                    address: p.workAddress,
+                    suburb: p.workSuburb || '',
+                    city: p.workCity || '',
+                    province: p.workProvince || '',
+                    lat: p.workLat || null,
+                    lng: p.workLng || null
+                });
+            }
+            // Third address
+            if (p.thirdAddress) {
+                savedAddresses.push({
+                    type: 'third',
+                    address: p.thirdAddress,
+                    suburb: p.thirdSuburb || '',
+                    city: p.thirdCity || '',
+                    province: p.thirdProvince || '',
+                    lat: p.thirdLat || null,
+                    lng: p.thirdLng || null
+                });
+            }
+        }
+    }
+    
+    function updateLocationStatus(status, lat, lng) {
+        // Update the location status display
+        const statusElement = document.getElementById('locationStatus');
+        if (statusElement) {
+            if (status === 'known') {
+                statusElement.innerHTML = `<span class="location-status known"><i class="fas fa-check-circle"></i> In a saved location</span>`;
+            } else {
+                statusElement.innerHTML = `<span class="location-status unknown"><i class="fas fa-exclamation-triangle"></i> Unknown location — guardians notified</span>`;
+            }
+        }
+    }
+    
+    function handleUnknownLocation(lat, lng) {
+        // Notify guardians of unknown location
+        const kin = document.getElementById('emergencyPhone')?.value;
+        const policeWard = document.getElementById('policeWardNumberProfile')?.value || document.getElementById('policeWardNumber')?.value;
+        const securityPhone = document.getElementById('securityPhoneProfile')?.value || document.getElementById('securityPhone')?.value;
+        
+        // Send alerts
+        if (kin) {
+            callWhatsApp(kin, `PELO: User is at an unknown location. GPS: ${lat}, ${lng}. Please check in.`);
+        }
+        if (policeWard) {
+            callWhatsApp(policeWard, `PELO: Unknown location alert. Coordinates: ${lat}, ${lng}.`);
+        }
+        if (securityPhone) {
+            callWhatsApp(securityPhone, `PELO: User outside saved locations. Coordinates: ${lat}, ${lng}.`);
+        }
+        
+        // Add to incident feed
+        addIncident("Unknown location detected", `${lat.toFixed(4)}, ${lng.toFixed(4)}`, "medium", "GPS auto-update");
+        
+        // Add notification
+        addNotification(`📍 Unknown location: You are outside your saved addresses. Guardians have been notified.`);
+    }
     
     // ========== EMERGENCY NUMBERS DATABASE ==========
     const emergencyDatabase = {
@@ -577,7 +876,7 @@
         container.innerHTML = html;
     }
     
-    // ========== SAFETY CHAT - EMERGENCY ONLY ==========
+    // ========== SAFETY CHAT ==========
     async function sendToSafetyChat(message) {
         const container = document.getElementById('chatMessages');
         const userDiv = document.createElement('div');
@@ -770,6 +1069,22 @@
             idNumber: document.getElementById('profileId')?.value || '',
             email: document.getElementById('profileEmail')?.value || '',
             phone: document.getElementById('profilePhone')?.value || '',
+            // Primary address (home)
+            homeAddress: document.getElementById('profileHomeAddress')?.value || '',
+            homeSuburb: document.getElementById('profileHomeSuburb')?.value || '',
+            homeCity: document.getElementById('profileHomeCity')?.value || '',
+            homeProvince: document.getElementById('profileHomeProvince')?.value || '',
+            // Secondary address (work)
+            workAddress: document.getElementById('profileWorkAddress')?.value || '',
+            workSuburb: document.getElementById('profileWorkSuburb')?.value || '',
+            workCity: document.getElementById('profileWorkCity')?.value || '',
+            workProvince: document.getElementById('profileWorkProvince')?.value || '',
+            // Third address
+            thirdAddress: document.getElementById('profileThirdAddress')?.value || '',
+            thirdSuburb: document.getElementById('profileThirdSuburb')?.value || '',
+            thirdCity: document.getElementById('profileThirdCity')?.value || '',
+            thirdProvince: document.getElementById('profileThirdProvince')?.value || '',
+            // Emergency contacts
             emergencyName: document.getElementById('emergencyName')?.value || '',
             emergencyPhone: document.getElementById('emergencyPhone')?.value || '',
             emergencyRelation: document.getElementById('emergencyRelation')?.value || '',
@@ -777,22 +1092,38 @@
             policeWardNumber: document.getElementById('policeWardNumberProfile')?.value || '',
             securityPhone: document.getElementById('securityPhoneProfile')?.value || '',
             securityCompany: document.getElementById('securityCompanyProfile')?.value || '',
+            // Medical and insurance
             medicalAidScheme: document.getElementById('medicalAidScheme')?.value || '',
             medicalAidNumber: document.getElementById('medicalAidNumber')?.value || '',
             insuranceCompany: document.getElementById('insuranceCompany')?.value || '',
             insurancePolicy: document.getElementById('insurancePolicy')?.value || '',
             bloodType: document.getElementById('bloodType')?.value || '',
             medicalNotes: document.getElementById('medicalNotes')?.value || '',
-            homeAddress: document.getElementById('homeAddress')?.value || '',
-            homeSuburb: document.getElementById('homeSuburb')?.value || '',
-            homeCity: document.getElementById('homeCity')?.value || '',
-            homeProvince: document.getElementById('homeProvince')?.value || ''
+            // GPS settings
+            gpsAutoUpdate: document.getElementById('gpsAutoUpdateToggleProfile')?.checked || false,
+            // Store geocoded coordinates (we'll update these when geocoding is available)
+            homeLat: null,
+            homeLng: null,
+            workLat: null,
+            workLng: null,
+            thirdLat: null,
+            thirdLng: null
         };
         localStorage.setItem('pelo_profile', JSON.stringify(profile));
         document.getElementById('profileSuccess').style.display = 'block';
         setTimeout(() => document.getElementById('profileSuccess').style.display = 'none', 3000);
         addNotification("Profile saved successfully");
         updateProfileEmergencyButtons();
+        loadAddressesFromProfile();
+        
+        // Update GPS auto-update toggle
+        if (profile.gpsAutoUpdate) {
+            gpsAutoUpdateEnabled = true;
+            startLocationTracking();
+        } else {
+            gpsAutoUpdateEnabled = false;
+            stopLocationTracking();
+        }
     }
     
     function loadProfile() {
@@ -803,6 +1134,22 @@
             if (document.getElementById('profileId')) document.getElementById('profileId').value = p.idNumber || '';
             if (document.getElementById('profileEmail')) document.getElementById('profileEmail').value = p.email || '';
             if (document.getElementById('profilePhone')) document.getElementById('profilePhone').value = p.phone || '';
+            // Primary address
+            if (document.getElementById('profileHomeAddress')) document.getElementById('profileHomeAddress').value = p.homeAddress || '';
+            if (document.getElementById('profileHomeSuburb')) document.getElementById('profileHomeSuburb').value = p.homeSuburb || '';
+            if (document.getElementById('profileHomeCity')) document.getElementById('profileHomeCity').value = p.homeCity || '';
+            if (document.getElementById('profileHomeProvince')) document.getElementById('profileHomeProvince').value = p.homeProvince || 'Gauteng';
+            // Work address
+            if (document.getElementById('profileWorkAddress')) document.getElementById('profileWorkAddress').value = p.workAddress || '';
+            if (document.getElementById('profileWorkSuburb')) document.getElementById('profileWorkSuburb').value = p.workSuburb || '';
+            if (document.getElementById('profileWorkCity')) document.getElementById('profileWorkCity').value = p.workCity || '';
+            if (document.getElementById('profileWorkProvince')) document.getElementById('profileWorkProvince').value = p.workProvince || 'Gauteng';
+            // Third address
+            if (document.getElementById('profileThirdAddress')) document.getElementById('profileThirdAddress').value = p.thirdAddress || '';
+            if (document.getElementById('profileThirdSuburb')) document.getElementById('profileThirdSuburb').value = p.thirdSuburb || '';
+            if (document.getElementById('profileThirdCity')) document.getElementById('profileThirdCity').value = p.thirdCity || '';
+            if (document.getElementById('profileThirdProvince')) document.getElementById('profileThirdProvince').value = p.thirdProvince || 'Gauteng';
+            // Emergency contacts
             if (document.getElementById('emergencyName')) document.getElementById('emergencyName').value = p.emergencyName || '';
             if (document.getElementById('emergencyPhone')) document.getElementById('emergencyPhone').value = p.emergencyPhone || '';
             if (document.getElementById('emergencyRelation')) document.getElementById('emergencyRelation').value = p.emergencyRelation || '';
@@ -810,18 +1157,20 @@
             if (document.getElementById('policeWardNumberProfile')) document.getElementById('policeWardNumberProfile').value = p.policeWardNumber || '';
             if (document.getElementById('securityPhoneProfile')) document.getElementById('securityPhoneProfile').value = p.securityPhone || '';
             if (document.getElementById('securityCompanyProfile')) document.getElementById('securityCompanyProfile').value = p.securityCompany || '';
+            // Medical and insurance
             if (document.getElementById('medicalAidScheme')) document.getElementById('medicalAidScheme').value = p.medicalAidScheme || '';
             if (document.getElementById('medicalAidNumber')) document.getElementById('medicalAidNumber').value = p.medicalAidNumber || '';
             if (document.getElementById('insuranceCompany')) document.getElementById('insuranceCompany').value = p.insuranceCompany || '';
             if (document.getElementById('insurancePolicy')) document.getElementById('insurancePolicy').value = p.insurancePolicy || '';
             if (document.getElementById('bloodType')) document.getElementById('bloodType').value = p.bloodType || '';
             if (document.getElementById('medicalNotes')) document.getElementById('medicalNotes').value = p.medicalNotes || '';
-            if (document.getElementById('homeAddress')) document.getElementById('homeAddress').value = p.homeAddress || '';
-            if (document.getElementById('homeSuburb')) document.getElementById('homeSuburb').value = p.homeSuburb || '';
-            if (document.getElementById('homeCity')) document.getElementById('homeCity').value = p.homeCity || '';
-            if (document.getElementById('homeProvince')) document.getElementById('homeProvince').value = p.homeProvince || '';
+            // GPS settings
+            if (document.getElementById('gpsAutoUpdateToggleProfile')) {
+                document.getElementById('gpsAutoUpdateToggleProfile').checked = p.gpsAutoUpdate !== undefined ? p.gpsAutoUpdate : true;
+            }
         }
         updateProfileEmergencyButtons();
+        loadAddressesFromProfile();
     }
     
     // ========== INCIDENT & NOTIFICATION HELPERS ==========
@@ -912,6 +1261,14 @@
                 if(fullMap) fullMap.setView([lat, lng], 15);
                 const userIcon = L.divIcon({ html: '<div style="background:#00FF88; width:24px; height:24px; border-radius:50%; border:2px solid white;"></div>', iconSize: [24,24] });
                 L.marker([lat, lng], { icon: userIcon }).addTo(map).bindPopup('Your Location').openPopup();
+                // Update current location
+                currentLocation = { lat, lng };
+                // Check location status
+                const status = checkLocationStatus(lat, lng);
+                updateLocationStatus(status, lat, lng);
+                if (status === 'unknown' && gpsAutoUpdateEnabled) {
+                    handleUnknownLocation(lat, lng);
+                }
             }, () => { alert("Could not get your location"); });
         } else { alert("Geolocation not supported"); }
     }
@@ -931,11 +1288,14 @@
     });
     
     document.getElementById('panicButton')?.addEventListener('click', () => {
-        addIncident("panic alert", "current location", "high", "rapid response unit");
+        const loc = currentLocation ? `(${currentLocation.lat.toFixed(4)}, ${currentLocation.lng.toFixed(4)})` : "current location";
+        addIncident("panic alert", loc, "high", "rapid response unit");
         const kin = document.getElementById('emergencyPhone')?.value;
-        if(kin) callWhatsApp(kin, "Panic alert from Pelo user at current location. Please check.");
+        if(kin) callWhatsApp(kin, `Panic alert from Pelo user at ${loc}. Please check.`);
         const policeWard = document.getElementById('policeWardNumberProfile')?.value || document.getElementById('policeWardNumber')?.value;
-        if(policeWard) callWhatsApp(policeWard, "Panic alert at current location. Emergency response needed.");
+        if(policeWard) callWhatsApp(policeWard, `Panic alert at ${loc}. Emergency response needed.`);
+        const securityPhone = document.getElementById('securityPhoneProfile')?.value || document.getElementById('securityPhone')?.value;
+        if(securityPhone) callWhatsApp(securityPhone, `Panic alert at ${loc}.`);
     });
     
     document.getElementById('sendChatBtn')?.addEventListener('click', () => { const msg = document.getElementById('chatInput')?.value; if(msg) sendToSafetyChat(msg); });
@@ -986,6 +1346,7 @@
             }
             if(btn.dataset.section === 'recipes') loadRecipes();
             if(btn.dataset.section === 'emergency') displayEmergencyNumbers('national');
+            if(btn.dataset.section === 'profile') loadProfile();
         });
     });
     
@@ -993,21 +1354,90 @@
     document.getElementById('startTrialBtn')?.addEventListener('click', () => {
         const email = document.getElementById('loginEmail').value;
         if(!email) { alert("Email required"); return; }
-        localStorage.setItem('pelo_user', JSON.stringify({
-            name: document.getElementById('loginName').value, email,
+        
+        // Collect all addresses from login
+        const userData = {
+            name: document.getElementById('loginName').value,
+            email: email,
             phone: document.getElementById('loginPhone').value,
             securityPhone: document.getElementById('securityPhone').value,
             kin: document.getElementById('nextOfKinWhatsApp').value,
             group: document.getElementById('neighbourhoodGroup').value,
             policeWard: document.getElementById('policeWardNumber').value,
             securityCompany: document.getElementById('securityCompany').value,
-            fall: document.getElementById('fallDetectionToggle').checked
-        }));
+            fall: document.getElementById('fallDetectionToggle').checked,
+            gpsAutoUpdate: document.getElementById('gpsAutoUpdateToggle').checked,
+            // Primary address
+            homeAddress: document.getElementById('homeAddress').value,
+            homeSuburb: document.getElementById('homeSuburb').value,
+            homeCity: document.getElementById('homeCity').value,
+            homeProvince: document.getElementById('homeProvince').value,
+            // Work address
+            workAddress: document.getElementById('workAddress').value,
+            workSuburb: document.getElementById('workSuburb').value,
+            workCity: document.getElementById('workCity').value,
+            workProvince: document.getElementById('workProvince').value,
+            // Third address
+            thirdAddress: document.getElementById('thirdAddress').value,
+            thirdSuburb: document.getElementById('thirdSuburb').value,
+            thirdCity: document.getElementById('thirdCity').value,
+            thirdProvince: document.getElementById('thirdProvince').value
+        };
+        
+        localStorage.setItem('pelo_user', JSON.stringify(userData));
+        
+        // Save to profile as well
+        const profileData = {
+            name: userData.name,
+            email: userData.email,
+            phone: userData.phone,
+            homeAddress: userData.homeAddress,
+            homeSuburb: userData.homeSuburb,
+            homeCity: userData.homeCity,
+            homeProvince: userData.homeProvince,
+            workAddress: userData.workAddress,
+            workSuburb: userData.workSuburb,
+            workCity: userData.workCity,
+            workProvince: userData.workProvince,
+            thirdAddress: userData.thirdAddress,
+            thirdSuburb: userData.thirdSuburb,
+            thirdCity: userData.thirdCity,
+            thirdProvince: userData.thirdProvince,
+            emergencyPhone: userData.kin,
+            policeWardNumber: userData.policeWard,
+            securityPhone: userData.securityPhone,
+            securityCompany: userData.securityCompany,
+            communityWhatsAppGroup: userData.group,
+            gpsAutoUpdate: userData.gpsAutoUpdate
+        };
+        localStorage.setItem('pelo_profile', JSON.stringify(profileData));
+        
         document.getElementById('loginOverlay').style.display = 'none';
         document.getElementById('appContainer').style.display = 'block';
         fallActive = document.getElementById('fallDetectionToggle').checked;
+        gpsAutoUpdateEnabled = document.getElementById('gpsAutoUpdateToggle').checked;
+        
         initFall(); renderGuardians(); initMap(); loadProfile();
+        loadAddressesFromProfile();
+        
+        if (gpsAutoUpdateEnabled) {
+            startLocationTracking();
+            // Initial location check
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    const lat = pos.coords.latitude, lng = pos.coords.longitude;
+                    currentLocation = { lat, lng };
+                    const status = checkLocationStatus(lat, lng);
+                    updateLocationStatus(status, lat, lng);
+                    if (status === 'unknown' && gpsAutoUpdateEnabled) {
+                        handleUnknownLocation(lat, lng);
+                    }
+                }, null, { timeout: 5000 });
+            }
+        }
+        
         if(Notification.permission !== 'granted') Notification.requestPermission();
+        addNotification("Welcome to PELO! Your location-based safety network is active.");
     });
     
     if(localStorage.getItem('pelo_user')) {
@@ -1015,7 +1445,29 @@
         document.getElementById('appContainer').style.display = 'block';
         const saved = JSON.parse(localStorage.getItem('pelo_user'));
         fallActive = saved.fall !== false;
+        gpsAutoUpdateEnabled = saved.gpsAutoUpdate !== false;
+        
+        // Load saved addresses
+        loadAddressesFromProfile();
+        
         initFall(); renderGuardians(); initMap(); loadProfile();
+        
+        if (gpsAutoUpdateEnabled) {
+            startLocationTracking();
+            // Initial location check
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    const lat = pos.coords.latitude, lng = pos.coords.longitude;
+                    currentLocation = { lat, lng };
+                    const status = checkLocationStatus(lat, lng);
+                    updateLocationStatus(status, lat, lng);
+                    if (status === 'unknown' && gpsAutoUpdateEnabled) {
+                        handleUnknownLocation(lat, lng);
+                    }
+                }, null, { timeout: 5000 });
+            }
+        }
+        
         if(Notification.permission !== 'granted') Notification.requestPermission();
     }
     
@@ -1024,6 +1476,8 @@
     
     setInterval(() => { let rt = document.getElementById('responseTime'); if(rt) rt.innerText = Math.floor(35 + Math.random() * 15); }, 20000);
     console.log("Pelo enhanced - Safety first. No directional advice. Emergency contacts only.");
+    console.log("GPS Auto-Update: " + (gpsAutoUpdateEnabled ? "ENABLED" : "DISABLED"));
+    console.log("Saved Addresses: " + savedAddresses.length);
 </script>
 </body>
 </html>
