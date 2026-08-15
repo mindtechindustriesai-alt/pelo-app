@@ -38,6 +38,76 @@
         #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         .container { max-width: 1300px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
         
+        /* ===== DARK MAP TILES FIX ===== */
+        .dark-tiles .leaflet-tile-pane {
+            filter: invert(100%) hue-rotate(180deg) brightness(0.85) !important;
+        }
+        .leaflet-tile-pane {
+            filter: invert(100%) hue-rotate(180deg) brightness(0.85) !important;
+        }
+        .leaflet-control-attribution {
+            background: rgba(10, 15, 26, 0.85) !important;
+            color: #8A99B0 !important;
+            font-size: 9px !important;
+            border-top: 1px solid rgba(0,180,216,0.15) !important;
+        }
+        .leaflet-control-attribution a {
+            color: var(--primary) !important;
+        }
+        .leaflet-popup-content-wrapper {
+            background: rgba(10, 15, 26, 0.95) !important;
+            color: #E8EDF5 !important;
+            border: 1px solid rgba(0, 180, 216, 0.3) !important;
+            border-radius: 16px !important;
+            backdrop-filter: blur(10px) !important;
+        }
+        .leaflet-popup-tip {
+            background: rgba(10, 15, 26, 0.95) !important;
+        }
+        .leaflet-popup-content {
+            font-family: var(--font-exo) !important;
+            font-size: 13px !important;
+        }
+        .leaflet-control-zoom {
+            border: 1px solid rgba(0,180,216,0.2) !important;
+            border-radius: 12px !important;
+            overflow: hidden !important;
+        }
+        .leaflet-control-zoom a {
+            background: rgba(10, 15, 26, 0.85) !important;
+            color: var(--text-primary) !important;
+            border-color: rgba(0,180,216,0.15) !important;
+        }
+        .leaflet-control-zoom a:hover {
+            background: rgba(0,180,216,0.2) !important;
+        }
+        
+        /* ===== MAP CONTAINER FIX ===== */
+        .map-container {
+            height: 380px;
+            min-height: 300px;
+            width: 100%;
+            position: relative;
+            background: #0a0f1a;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+        .map-container.full-height {
+            height: 500px;
+            min-height: 400px;
+        }
+        #peloMap, #fullMap {
+            height: 100%;
+            width: 100%;
+            background: #0a0f1a;
+            border-radius: 20px;
+        }
+        .leaflet-container {
+            background: #0a0f1a !important;
+        }
+        
+        /* ===== GLASS CARD STYLES ===== */
         .glass-card, .stat-card, .guardian-card, .incident-item, .chat-message, .menu-btn, .notification-icon, .report-form-input {
             background: rgba(15, 25, 45, 0.45);
             backdrop-filter: blur(16px);
@@ -46,6 +116,7 @@
         }
         .glass-card:hover, .stat-card:hover, .guardian-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,180,216,0.15); }
         
+        /* ===== LOGIN OVERLAY ===== */
         .login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(5,8,15,0.98); backdrop-filter: blur(20px);
@@ -82,33 +153,38 @@
         }
         .demo-btn:hover { transform: scale(0.98); box-shadow: 0 4px 20px rgba(0,180,216,0.4); }
         
+        /* ===== HEADER ===== */
         .pelo-header { text-align: center; padding: 15px 0 20px; }
         .pelo-logo { max-width: 280px; width: 100%; filter: drop-shadow(0 0 20px #00B4D8); animation: float 4s ease-in-out infinite; }
         @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
         .pelo-tagline { font-size: 0.75rem; color: var(--secondary); letter-spacing: 3px; margin-top: 8px; font-family: var(--font-mono); }
         
+        /* ===== STATS ===== */
         .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 25px; }
         .stat-card { border-radius: 24px; padding: 18px; text-align: center; }
         .stat-value { font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, var(--secondary), var(--primary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .stat-label { font-size: 0.7rem; color: var(--text-secondary); margin-top: 5px; font-family: var(--font-mono); }
         
+        /* ===== MENU ===== */
         .top-menu { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 25px; }
-        .menu-btn { border-radius: 40px; padding: 10px 22px; color: white; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .menu-btn { border-radius: 40px; padding: 10px 22px; color: white; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid transparent; }
         .menu-btn.active, .menu-btn:hover { background: rgba(0,180,216,0.35); border-color: var(--primary); color: var(--secondary); transform: translateY(-2px); }
         
+        /* ===== SECTIONS ===== */
         .section { display: none; animation: fadeUp 0.35s ease; }
         .section.active { display: block; }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
         
+        /* ===== GLASS CARD ===== */
         .glass-card { border-radius: 28px; padding: 24px; margin-bottom: 24px; }
         .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--glass-border); }
         .card-header i { font-size: 1.4rem; color: var(--primary); }
         .card-header h3 { font-size: 1.1rem; font-weight: 600; }
         
+        /* ===== GRID LAYOUTS ===== */
         .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
-        .map-container { height: 380px; border-radius: 20px; overflow: hidden; border: 1px solid var(--glass-border); background: #0a0f1a; position: relative; }
-        #peloMap, #fullMap { height: 100%; width: 100%; }
         
+        /* ===== PANIC BUTTONS ===== */
         .panic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
         .panic-btn { border: none; padding: 16px; border-radius: 60px; font-weight: 700; color: white; cursor: pointer; font-size: 1rem; transition: all 0.2s; }
         .panic-btn-primary { background: linear-gradient(135deg, var(--danger), #FF6B4A); animation: pulse 1.5s infinite; }
@@ -117,19 +193,23 @@
         .panic-btn:hover { transform: scale(1.02); filter: brightness(1.05); }
         @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.85; box-shadow: 0 0 15px rgba(239,71,111,0.4); } }
         
+        /* ===== EMERGENCY ===== */
         .emergency-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
         .emergency-buttons button { background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); padding: 10px 16px; border-radius: 40px; color: white; cursor: pointer; font-size: 12px; transition: 0.2s; }
         .emergency-buttons button:hover { background: rgba(0,180,216,0.3); border-color: var(--primary); }
         
+        /* ===== INCIDENT FEED ===== */
         .incident-feed { max-height: 260px; overflow-y: auto; }
         .incident-item { padding: 12px; margin-bottom: 10px; border-radius: 14px; border-left: 3px solid var(--danger); font-size: 12px; }
         .incident-item.medium { border-left-color: var(--warning); }
         .incident-item.low { border-left-color: var(--success); }
         
+        /* ===== GUARDIANS ===== */
         .guardian-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; margin-top: 10px; }
         .guardian-card { border-radius: 18px; padding: 14px; display: flex; align-items: center; gap: 14px; }
-        .guardian-avatar { width: 48px; height: 48px; background: linear-gradient(135deg, var(--primary), var(--quantum)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .guardian-avatar { width: 48px; height: 48px; background: linear-gradient(135deg, var(--primary), var(--quantum)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 700; color: white; }
         
+        /* ===== CHAT ===== */
         .chat-messages { height: 240px; overflow-y: auto; padding: 15px; background: rgba(0,0,0,0.25); border-radius: 20px; margin-bottom: 12px; }
         .chat-message { padding: 10px 14px; margin-bottom: 10px; border-radius: 18px; max-width: 80%; font-size: 13px; }
         .chat-message.resident { background: var(--primary); margin-left: auto; text-align: right; }
@@ -140,17 +220,20 @@
         .typing-indicator span { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; animation: typing 1.4s infinite; }
         @keyframes typing { 0%,60%,100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
         
-        .btn-send { background: var(--primary); border: none; border-radius: 60px; padding: 0 22px; color: white; cursor: pointer; font-weight: 600; font-family: var(--font-exo); }
+        /* ===== BUTTONS ===== */
+        .btn-send { background: var(--primary); border: none; border-radius: 60px; padding: 0 22px; color: white; cursor: pointer; font-weight: 600; font-family: var(--font-exo); height: 48px; }
         .btn-secondary { background: rgba(0,180,216,0.2); border: 1px solid var(--glass-border); border-radius: 40px; padding: 8px 16px; cursor: pointer; color: white; font-size: 12px; transition: 0.2s; }
         .btn-secondary:hover { background: rgba(0,180,216,0.4); border-color: var(--primary); }
         .btn-whatsapp { background: #25D366; border: none; border-radius: 40px; padding: 6px 12px; cursor: pointer; color: white; font-size: 11px; margin-left: 8px; transition: 0.2s; }
         .btn-whatsapp:hover { transform: scale(1.05); }
         
+        /* ===== FORMS ===== */
         .form-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
         @media (min-width: 768px) { .form-grid { grid-template-columns: repeat(2, 1fr); } }
         .form-group { margin-bottom: 5px; }
         .form-group label { display: block; margin-bottom: 5px; font-size: 11px; color: var(--secondary); font-family: var(--font-mono); }
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 14px; color: white; font-size: 13px; font-family: var(--font-exo); }
+        .form-group textarea { resize: vertical; min-height: 60px; }
         
         .report-form-input { width: 100%; padding: 14px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 16px; color: white; font-size: 14px; margin-bottom: 15px; font-family: var(--font-exo); }
         .report-form-select { width: 100%; padding: 14px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 16px; color: white; font-size: 14px; margin-bottom: 15px; font-family: var(--font-exo); cursor: pointer; }
@@ -162,11 +245,13 @@
         .phone-field { display: flex; align-items: center; gap: 8px; }
         .phone-field input { flex: 1; }
         
+        /* ===== EMERGENCY NUMBERS ===== */
         .emergency-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; }
         @media (min-width: 768px) { .emergency-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); } }
         .emergency-number { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; text-align: center; cursor: pointer; transition: 0.2s; }
         .emergency-number:hover { background: rgba(0,180,216,0.2); transform: scale(1.02); }
         
+        /* ===== RECIPES ===== */
         .recipe-controls { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; align-items: center; }
         .recipe-search { flex: 1; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 40px; color: white; font-family: var(--font-exo); }
         .recipe-sort { padding: 10px 16px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 40px; color: white; cursor: pointer; }
@@ -176,6 +261,7 @@
         .recipe-card { background: rgba(0,0,0,0.3); border-radius: 16px; padding: 16px; }
         .recipe-cost { color: var(--success); font-weight: bold; }
         
+        /* ===== ADS & FOOTER ===== */
         .ad-space { text-align: center; padding: 25px; background: linear-gradient(135deg, rgba(0,180,216,0.05), rgba(138,43,226,0.03)); border: 2px dashed var(--warning); border-radius: 24px; margin: 25px 0; }
         .rotating-image { width: 120px; margin: 15px auto; display: block; animation: rotateScale 4s ease-in-out infinite; }
         @keyframes rotateScale { 0%,100% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(3deg) scale(1.03); } 100% { transform: rotate(0deg) scale(1); } }
@@ -187,7 +273,7 @@
         .footer .quantum-line { font-family: var(--font-mono); font-size: 0.7rem; margin-bottom: 8px; letter-spacing: 0.5px; color: var(--secondary); }
         .footer .price-line { font-size: 0.65rem; margin-top: 5px; }
         
-        /* NOTIFICATION SYSTEM */
+        /* ===== NOTIFICATIONS ===== */
         .notification-area { position: fixed; top: 20px; right: 20px; z-index: 100; }
         .notification-icon { border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }
         .notification-icon .badge { position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; font-size: 10px; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; }
@@ -200,34 +286,43 @@
         .notification-item .priority-high { color: var(--danger); }
         .notification-item .priority-medium { color: var(--warning); }
         
+        /* ===== WHATSAPP FAB ===== */
         .whatsapp-business { position: fixed; bottom: 25px; right: 25px; z-index: 100; }
         .whatsapp-btn { background: #25D366; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: white; cursor: pointer; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.2s; }
         .whatsapp-btn:hover { transform: scale(1.08); }
         
+        /* ===== MODAL ===== */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); z-index: 3000; align-items: center; justify-content: center; }
         .modal.active { display: flex; }
         .modal-content { background: #1A1A2E; border: 2px solid var(--danger); border-radius: 32px; padding: 28px; max-width: 380px; width: 90%; text-align: center; }
         .fall-countdown { font-size: 3rem; font-weight: bold; color: var(--danger); margin: 15px 0; }
         
-        .address-chip { display: inline-block; background: rgba(0,180,216,0.15); border: 1px solid var(--primary); border-radius: 40px; padding: 3px 12px; font-size: 10px; color: var(--secondary); margin: 2px 4px; }
-        .location-status { display: inline-block; padding: 4px 12px; border-radius: 40px; font-size: 10px; font-family: var(--font-mono); }
-        .location-status.known { background: rgba(0,255,136,0.15); color: var(--success); }
-        .location-status.unknown { background: rgba(255,166,0,0.15); color: var(--warning); }
-        
+        /* ===== COOLDOWN CONTROLS ===== */
         .cooldown-controls { display: flex; flex-wrap: wrap; gap: 15px; align-items: center; margin-top: 10px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 16px; }
         .cooldown-controls label { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 8px; }
         .cooldown-controls input[type="range"] { width: 120px; accent-color: var(--primary); }
         .cooldown-controls input[type="number"] { width: 60px; padding: 4px 8px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 8px; color: white; text-align: center; }
         .cooldown-status { font-size: 10px; color: var(--text-secondary); font-family: var(--font-mono); margin-top: 8px; }
         
-        @media (max-width: 900px) { .two-column { grid-template-columns: 1fr; } .stats-row { grid-template-columns: repeat(2, 1fr); } .pelo-logo { max-width: 220px; } }
-        @media (max-width: 480px) { .login-card { padding: 20px 16px; } .address-row { grid-template-columns: 1fr; } .notification-box { width: 300px; right: -10px; } }
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) { 
+            .two-column { grid-template-columns: 1fr; } 
+            .stats-row { grid-template-columns: repeat(2, 1fr); } 
+            .pelo-logo { max-width: 220px; } 
+        }
+        @media (max-width: 480px) { 
+            .login-card { padding: 20px 16px; } 
+            .address-row { grid-template-columns: 1fr; } 
+            .notification-box { width: 300px; right: -10px; } 
+            .map-container { height: 280px; min-height: 200px; }
+            .map-container.full-height { height: 350px; min-height: 250px; }
+        }
     </style>
 </head>
 <body>
 <div id="particles-js"></div>
 
-<!-- LOGIN OVERLAY -->
+<!-- ===== LOGIN OVERLAY ===== -->
 <div id="loginOverlay" class="login-overlay">
     <div class="login-card">
         <img src="https://i.postimg.cc/KvmJMsTk/pelo-transparent-logo.png" alt="PELO" class="login-logo">
@@ -321,7 +416,7 @@
     </div>
 </div>
 
-<!-- MAIN APP -->
+<!-- ===== MAIN APP ===== -->
 <div class="container" id="appContainer" style="display: none;">
     <div class="notification-area">
         <div class="notification-icon" id="notificationIcon"><i class="fas fa-bell"></i><span class="badge" id="notificationBadge">0</span></div>
@@ -352,10 +447,14 @@
         <button class="menu-btn" data-section="settings">settings</button>
     </div>
     
-    <!-- DASHBOARD SECTION -->
+    <!-- ===== DASHBOARD ===== -->
     <div id="section-dashboard" class="section active">
         <div class="two-column">
-            <div class="glass-card"><div class="card-header"><i class="fas fa-map-marked-alt"></i><h3>live incident map</h3></div><div class="map-container"><div id="peloMap" style="height:380px;"></div></div><button id="locateBtn" class="btn-secondary" style="margin-top:12px; width:100%;"><i class="fas fa-location-dot"></i> my location</button></div>
+            <div class="glass-card">
+                <div class="card-header"><i class="fas fa-map-marked-alt"></i><h3>live incident map</h3></div>
+                <div class="map-container" id="mainMapContainer"><div id="peloMap" style="height:100%; width:100%;"></div></div>
+                <button id="locateBtn" class="btn-secondary" style="margin-top:12px; width:100%;"><i class="fas fa-location-dot"></i> my location</button>
+            </div>
             <div class="glass-card">
                 <div class="card-header"><i class="fas fa-bell"></i><h3>emergency response</h3></div>
                 <div class="panic-grid">
@@ -368,13 +467,22 @@
                 <div class="incident-feed" id="incidentFeed"></div>
             </div>
         </div>
-        <div class="glass-card"><div class="card-header"><i class="fas fa-shield-alt"></i><h3>active guardians</h3></div><div class="guardian-grid" id="guardianGrid"></div></div>
+        <div class="glass-card">
+            <div class="card-header"><i class="fas fa-shield-alt"></i><h3>active guardians</h3></div>
+            <div class="guardian-grid" id="guardianGrid"></div>
+        </div>
     </div>
     
-    <!-- MAP SECTION -->
-    <div id="section-map" class="section"><div class="glass-card"><div class="card-header"><i class="fas fa-map"></i><h3>full map view</h3></div><div class="map-container" style="height:500px;"><div id="fullMap" style="height:500px;"></div></div><button id="fullLocateBtn" class="btn-secondary" style="margin-top:12px; width:100%;"><i class="fas fa-location-dot"></i> my location</button></div></div>
+    <!-- ===== MAP ===== -->
+    <div id="section-map" class="section">
+        <div class="glass-card">
+            <div class="card-header"><i class="fas fa-map"></i><h3>full map view</h3></div>
+            <div class="map-container full-height"><div id="fullMap" style="height:100%; width:100%;"></div></div>
+            <button id="fullLocateBtn" class="btn-secondary" style="margin-top:12px; width:100%;"><i class="fas fa-location-dot"></i> my location</button>
+        </div>
+    </div>
     
-    <!-- CHAT SECTION -->
+    <!-- ===== CHAT ===== -->
     <div id="section-chat" class="section">
         <div class="glass-card">
             <div class="card-header"><i class="fas fa-comments"></i><h3>community safety chat · powered by pelo guardian</h3></div>
@@ -387,7 +495,7 @@
         </div>
     </div>
     
-    <!-- REPORTS SECTION -->
+    <!-- ===== REPORTS ===== -->
     <div id="section-reports" class="section">
         <div class="glass-card">
             <div class="card-header"><i class="fas fa-user-secret"></i><h3>anonymous report + video</h3></div>
@@ -408,10 +516,15 @@
         </div>
     </div>
     
-    <!-- GUARDIANS SECTION -->
-    <div id="section-guardians" class="section"><div class="glass-card"><div class="card-header"><i class="fas fa-shield-alt"></i><h3>all guardians & security</h3></div><div class="guardian-grid" id="guardianFullGrid"></div></div></div>
+    <!-- ===== GUARDIANS ===== -->
+    <div id="section-guardians" class="section">
+        <div class="glass-card">
+            <div class="card-header"><i class="fas fa-shield-alt"></i><h3>all guardians & security</h3></div>
+            <div class="guardian-grid" id="guardianFullGrid"></div>
+        </div>
+    </div>
     
-    <!-- EMERGENCY SECTION -->
+    <!-- ===== EMERGENCY ===== -->
     <div id="section-emergency" class="section">
         <div class="glass-card">
             <div class="card-header"><i class="fas fa-phone-alt"></i><h3>emergency numbers database</h3></div>
@@ -432,7 +545,7 @@
         </div>
     </div>
     
-    <!-- RECIPES SECTION -->
+    <!-- ===== RECIPES ===== -->
     <div id="section-recipes" class="section">
         <div class="glass-card">
             <div class="card-header"><i class="fas fa-utensils"></i><h3>budget recipes</h3></div>
@@ -449,7 +562,7 @@
         </div>
     </div>
     
-    <!-- PROFILE SECTION -->
+    <!-- ===== PROFILE ===== -->
     <div id="section-profile" class="section">
         <div class="glass-card">
             <div class="card-header"><i class="fas fa-user-circle"></i><h3>my profile</h3></div>
@@ -548,7 +661,7 @@
         </div>
     </div>
     
-    <!-- SETTINGS SECTION -->
+    <!-- ===== SETTINGS ===== -->
     <div id="section-settings" class="section">
         <div class="glass-card">
             <div class="card-header"><i class="fas fa-sliders-h"></i><h3>settings</h3></div>
@@ -599,8 +712,8 @@
 
 <script>
     // ============================================================
-    // PELO - ENHANCED WITH ADJUSTABLE NOTIFICATION COOLDOWN
-    // Safety first. No directional advice. Emergency contacts only.
+    // PELO - MAP FIXED + DARK MODE
+    // Enhanced map rendering with dark tiles and proper sizing
     // ============================================================
     
     const LUVUNO_BACKEND_URL = 'https://luvuno-backend-proxy.onrender.com';
@@ -625,7 +738,6 @@
     let notificationCountThisMinute = 0;
     let notificationMinuteStart = Date.now();
     
-    // Default settings
     let notifSettings = {
         cooldownSeconds: 30,
         maxPerMinute: 2,
@@ -640,7 +752,6 @@
                 Object.assign(notifSettings, parsed);
             } catch(e) {}
         }
-        // Update UI
         const range = document.getElementById('notifCooldownRange');
         const input = document.getElementById('notifCooldownInput');
         const maxPerMin = document.getElementById('notifMaxPerMinute');
@@ -668,38 +779,31 @@
         
         const now = Date.now();
         
-        // Reset minute counter
         if (now - notificationMinuteStart > 60000) {
             notificationMinuteStart = now;
             notificationCountThisMinute = 0;
         }
         
-        // Check if we've sent too many this minute
         if (notificationCountThisMinute >= notifSettings.maxPerMinute) {
-            // Queue for later with priority
             notificationQueue.push({ msg, priority, timestamp: now });
             if (!isProcessingQueue) processQueue();
             return;
         }
         
-        // Check cooldown
         const timeSinceLast = now - lastNotificationTime;
         const cooldownMs = notifSettings.cooldownSeconds * 1000;
         
         if (timeSinceLast < cooldownMs && lastNotificationTime > 0) {
-            // Queue for later
             notificationQueue.push({ msg, priority, timestamp: now });
             if (!isProcessingQueue) processQueue();
             return;
         }
         
-        // Send now
         sendNotification(msg, priority);
         lastNotificationTime = now;
         notificationCountThisMinute++;
         updateCooldownStatus();
         
-        // Schedule processing of queue
         if (notificationQueue.length > 0 && !isProcessingQueue) {
             setTimeout(() => processQueue(), notifSettings.cooldownSeconds * 1000);
         }
@@ -709,21 +813,17 @@
         if (isProcessingQueue || notificationQueue.length === 0) return;
         isProcessingQueue = true;
         
-        // Sort by priority
         const priorityOrder = { high: 0, medium: 1, normal: 2, low: 3 };
         notificationQueue.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
         
         const now = Date.now();
         
-        // Reset minute counter if needed
         if (now - notificationMinuteStart > 60000) {
             notificationMinuteStart = now;
             notificationCountThisMinute = 0;
         }
         
-        // Check if we can send
         if (notificationCountThisMinute >= notifSettings.maxPerMinute) {
-            // Wait for next minute
             const waitTime = 60000 - (now - notificationMinuteStart) + 1000;
             setTimeout(() => {
                 isProcessingQueue = false;
@@ -742,7 +842,6 @@
             return;
         }
         
-        // Send next notification
         const next = notificationQueue.shift();
         sendNotification(next.msg, next.priority);
         lastNotificationTime = now;
@@ -750,17 +849,14 @@
         updateCooldownStatus();
         isProcessingQueue = false;
         
-        // Process more if any left
         if (notificationQueue.length > 0) {
             setTimeout(() => processQueue(), notifSettings.cooldownSeconds * 1000);
         }
     }
     
     function sendNotification(msg, priority = 'normal') {
-        // Update badge
         updateBadge();
         
-        // Add to notification box
         const box = document.getElementById('notificationBox');
         if (box) {
             const notif = document.createElement('div');
@@ -771,13 +867,11 @@
             notif.onclick = () => { notif.classList.remove('unread'); updateBadge(); };
             box.insertBefore(notif, box.firstChild);
             
-            // Limit number of notifications in box
             while (box.children.length > 50) {
                 box.removeChild(box.lastChild);
             }
         }
         
-        // Browser notification
         if (Notification.permission === 'granted' && priority !== 'low') {
             try {
                 new Notification('PELO Alert', { body: msg, icon: 'https://i.postimg.cc/KvmJMsTk/pelo-transparent-logo.png' });
@@ -814,27 +908,6 @@
                 if (p.workAddress) savedAddresses.push({ type: 'work', address: p.workAddress, suburb: p.workSuburb || '', city: p.workCity || '', province: p.workProvince || '' });
                 if (p.thirdAddress) savedAddresses.push({ type: 'third', address: p.thirdAddress, suburb: p.thirdSuburb || '', city: p.thirdCity || '', province: p.thirdProvince || '' });
             } catch(e) {}
-        }
-    }
-    
-    function checkLocationStatus(lat, lng) {
-        // Simple distance check - in production you'd use geocoding
-        // For now, we just check if we have any saved addresses
-        // and assume they're within a radius if we have lat/lng
-        // Since we don't have geocoded coordinates, we'll use a simplified approach
-        return savedAddresses.length > 0 ? 'known' : 'unknown';
-    }
-    
-    function handleUnknownLocation(lat, lng) {
-        const kin = document.getElementById('emergencyPhone')?.value;
-        const policeWard = document.getElementById('policeWardNumberProfile')?.value || document.getElementById('policeWardNumber')?.value;
-        const securityPhone = document.getElementById('securityPhoneProfile')?.value || document.getElementById('securityPhone')?.value;
-        
-        // Only send if we have contacts and we're not flooding
-        if (kin) {
-            const coords = lat && lng ? `${lat.toFixed(4)}, ${lng.toFixed(4)}` : 'unknown';
-            // Use addNotification with high priority
-            addNotification(`📍 Unknown location: You are outside saved addresses. Guardians notified.`, 'medium');
         }
     }
     
@@ -1275,62 +1348,207 @@
     }
     
     // ============================================================
-    // MAP INITIALIZATION
+    // MAP INITIALIZATION - FIXED
     // ============================================================
     
     function initMap() {
         const mapDiv = document.getElementById('peloMap');
         const fullMapDiv = document.getElementById('fullMap');
-        if (!mapDiv) return;
+        
+        if (!mapDiv) {
+            console.warn('Map container not found');
+            return;
+        }
+        
+        // Ensure containers have proper height
+        const mainContainer = document.getElementById('mainMapContainer');
+        if (mainContainer && (mainContainer.offsetHeight === 0 || mainContainer.offsetHeight < 100)) {
+            mainContainer.style.height = '380px';
+            mainContainer.style.minHeight = '380px';
+        }
+        if (fullMapDiv && fullMapDiv.parentElement && (fullMapDiv.parentElement.offsetHeight === 0 || fullMapDiv.parentElement.offsetHeight < 100)) {
+            fullMapDiv.parentElement.style.height = '500px';
+            fullMapDiv.parentElement.style.minHeight = '500px';
+        }
+        
         const defaultCenter = [-26.1395, 28.4134];
+        
         try {
-            if (map) map.remove();
-            map = L.map('peloMap').setView(defaultCenter, 13);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: 'OpenStreetMap',
-                subdomains: 'abcd', minZoom: 4, maxZoom: 19
-            }).addTo(map);
-            const hubIcon = L.divIcon({ html: '<div style="background:#00B4D8; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white;"></div>', iconSize: [36,36] });
-            L.marker([-26.1375, 28.4140], { icon: hubIcon }).addTo(map).bindPopup('Security Hub 24/7');
-            const patrolPositions = [[-26.1385,28.4125], [-26.1405,28.4150], [-26.1370,28.4110], [-26.1420,28.4180]];
-            patrolMarkers = [];
-            patrolPositions.forEach((pos, i) => {
-                const vehicleIcon = L.divIcon({ html: `<div style="background:#EF476F; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white;"></div>`, iconSize: [30,30] });
-                const marker = L.marker(pos, { icon: vehicleIcon }).addTo(map).bindPopup(`Patrol Unit ${i+1}`);
-                patrolMarkers.push({ marker, lat: pos[0], lng: pos[1] });
+            // Remove existing map instances
+            if (map) {
+                map.remove();
+                map = null;
+            }
+            if (fullMap) {
+                fullMap.remove();
+                fullMap = null;
+            }
+            
+            // Create main map
+            map = L.map('peloMap', {
+                center: defaultCenter,
+                zoom: 13,
+                zoomControl: true,
+                fadeAnimation: true,
+                attributionControl: true,
+                preferCanvas: true
             });
+            
+            // Dark tile layer with filter for dark mode
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                subdomains: 'abcd',
+                minZoom: 4,
+                maxZoom: 19,
+                className: 'dark-tiles'
+            }).addTo(map);
+            
+            // Create full map if container exists
+            if (fullMapDiv) {
+                fullMap = L.map('fullMap', {
+                    center: defaultCenter,
+                    zoom: 13,
+                    zoomControl: true,
+                    fadeAnimation: true,
+                    attributionControl: true,
+                    preferCanvas: true
+                });
+                
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                    subdomains: 'abcd',
+                    minZoom: 4,
+                    maxZoom: 19,
+                    className: 'dark-tiles'
+                }).addTo(fullMap);
+            }
+            
+            // Add security hub marker
+            const hubIcon = L.divIcon({
+                html: '<div style="background:#00B4D8; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid rgba(255,255,255,0.8); box-shadow: 0 0 20px rgba(0,180,216,0.5);"><i class="fas fa-shield-alt" style="color:white; font-size:14px;"></i></div>',
+                iconSize: [36,36],
+                className: 'hub-marker'
+            });
+            L.marker([-26.1375, 28.4140], { icon: hubIcon }).addTo(map).bindPopup('🚨 Security Hub 24/7');
+            if (fullMap) {
+                L.marker([-26.1375, 28.4140], { icon: hubIcon }).addTo(fullMap).bindPopup('🚨 Security Hub 24/7');
+            }
+            
+            // Add patrol markers
+            const patrolPositions = [
+                [-26.1385, 28.4125],
+                [-26.1405, 28.4150],
+                [-26.1370, 28.4110],
+                [-26.1420, 28.4180]
+            ];
+            patrolMarkers = [];
+            
+            patrolPositions.forEach((pos, i) => {
+                const vehicleIcon = L.divIcon({
+                    html: `<div style="background:#EF476F; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(239,71,111,0.3);"><span style="color:white; font-size:10px; font-weight:bold;">P${i+1}</span></div>`,
+                    iconSize: [30,30],
+                    className: 'patrol-marker'
+                });
+                const marker = L.marker(pos, { icon: vehicleIcon }).addTo(map).bindPopup(`Patrol Unit ${i+1} · On Duty`);
+                if (fullMap) {
+                    const fullMarker = L.marker(pos, { icon: vehicleIcon }).addTo(fullMap).bindPopup(`Patrol Unit ${i+1} · On Duty`);
+                    patrolMarkers.push({ marker, fullMarker, lat: pos[0], lng: pos[1] });
+                } else {
+                    patrolMarkers.push({ marker, lat: pos[0], lng: pos[1] });
+                }
+            });
+            
+            // Animate patrol markers
             setInterval(() => {
                 patrolMarkers.forEach(pm => {
                     let newLat = pm.lat + (Math.random() - 0.5) * 0.0015;
                     let newLng = pm.lng + (Math.random() - 0.5) * 0.0015;
                     newLat = Math.min(-26.130, Math.max(-26.148, newLat));
                     newLng = Math.min(28.425, Math.max(28.400, newLng));
-                    pm.lat = newLat; pm.lng = newLng;
+                    pm.lat = newLat;
+                    pm.lng = newLng;
                     pm.marker.setLatLng([newLat, newLng]);
+                    if (pm.fullMarker) {
+                        pm.fullMarker.setLatLng([newLat, newLng]);
+                    }
                 });
             }, 4000);
-            if (fullMapDiv && !fullMap) {
-                fullMap = L.map('fullMap').setView(defaultCenter, 13);
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(fullMap);
-                L.marker([-26.1375, 28.4140], { icon: hubIcon }).addTo(fullMap);
-            }
-            setTimeout(() => { if (map) map.invalidateSize(); if (fullMap) fullMap.invalidateSize(); }, 200);
-        } catch(e) { console.error("Map initialization error:", e); }
+            
+            // Force map to render properly
+            setTimeout(() => {
+                if (map) map.invalidateSize();
+                if (fullMap) fullMap.invalidateSize();
+            }, 300);
+            
+            // Also invalidate on window resize
+            window.addEventListener('resize', () => {
+                setTimeout(() => {
+                    if (map) map.invalidateSize();
+                    if (fullMap) fullMap.invalidateSize();
+                }, 200);
+            });
+            
+            console.log('🗺️ Maps initialized successfully');
+            
+        } catch(e) {
+            console.error('Map initialization error:', e);
+        }
     }
+    
+    // ============================================================
+    // LOCATE USER
+    // ============================================================
     
     function locateUser() { 
         if(navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(pos => { 
-                const lat = pos.coords.latitude, lng = pos.coords.longitude;
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
                 if(map) map.setView([lat, lng], 15);
                 if(fullMap) fullMap.setView([lat, lng], 15);
-                const userIcon = L.divIcon({ html: '<div style="background:#00FF88; width:24px; height:24px; border-radius:50%; border:2px solid white;"></div>', iconSize: [24,24] });
-                L.marker([lat, lng], { icon: userIcon }).addTo(map).bindPopup('Your Location').openPopup();
+                const userIcon = L.divIcon({
+                    html: '<div style="background:#00FF88; width:24px; height:24px; border-radius:50%; border:2px solid white; box-shadow: 0 0 20px rgba(0,255,136,0.4);"></div>',
+                    iconSize: [24,24],
+                    className: 'user-marker'
+                });
+                L.marker([lat, lng], { icon: userIcon }).addTo(map).bindPopup('📍 Your Location').openPopup();
                 currentLocation = { lat, lng };
-                addNotification('Location updated: ' + lat.toFixed(4) + ', ' + lng.toFixed(4), 'low');
+                addNotification('📍 Location updated: ' + lat.toFixed(4) + ', ' + lng.toFixed(4), 'low');
             }, () => { addNotification('Could not get your location', 'low'); });
         } else { addNotification('Geolocation not supported', 'low'); }
     }
+    
+    // ============================================================
+    // NAVIGATION - MAP FIX
+    // ============================================================
+    
+    document.querySelectorAll('.menu-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            const sectionId = `section-${this.dataset.section}`;
+            const section = document.getElementById(sectionId);
+            if (section) section.classList.add('active');
+            
+            // Fix map rendering when switching to map or dashboard tabs
+            if (this.dataset.section === 'map' || this.dataset.section === 'dashboard') {
+                setTimeout(() => {
+                    if (map) map.invalidateSize();
+                    if (fullMap) fullMap.invalidateSize();
+                }, 350);
+            }
+            
+            // Load content for other tabs
+            if (this.dataset.section === 'recipes') loadRecipes();
+            if (this.dataset.section === 'emergency') displayEmergencyNumbers('national');
+            if (this.dataset.section === 'profile') loadProfile();
+            if (this.dataset.section === 'settings') { 
+                loadNotifSettings(); 
+                updateCooldownStatus(); 
+            }
+        });
+    });
     
     // ============================================================
     // EVENT LISTENERS
@@ -1362,6 +1580,7 @@
     });
     
     document.getElementById('sendChatBtn')?.addEventListener('click', () => { const msg = document.getElementById('chatInput')?.value; if(msg) sendToSafetyChat(msg); });
+    document.getElementById('chatInput')?.addEventListener('keypress', (e) => { if(e.key === 'Enter') { const msg = document.getElementById('chatInput')?.value; if(msg) sendToSafetyChat(msg); } });
     document.getElementById('voiceChatBtn')?.addEventListener('click', () => {
         if (!('webkitSpeechRecognition' in window)) { addNotification('Voice not supported', 'low'); return; }
         const recog = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
@@ -1432,29 +1651,11 @@
         if(!cat || !loc || !desc) { addNotification('Please fill all report fields', 'low'); return; }
         addIncident(cat, loc, "medium", guardiansList[0].name);
         addNotification('Report submitted successfully', 'low');
-        document.getElementById('reportCategory').value = ''; document.getElementById('reportLocation').value = ''; document.getElementById('reportDescription').value = ''; selectedVideo = null; document.getElementById('videoFileName').innerHTML = 'no video selected';
-    });
-    
-    // ============================================================
-    // NAVIGATION
-    // ============================================================
-    
-    document.querySelectorAll('.menu-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            const sectionId = `section-${btn.dataset.section}`;
-            const section = document.getElementById(sectionId);
-            if (section) section.classList.add('active');
-            if (btn.dataset.section === 'map' || btn.dataset.section === 'dashboard') {
-                setTimeout(() => { if(map) map.invalidateSize(); if(fullMap) fullMap.invalidateSize(); }, 200);
-            }
-            if (btn.dataset.section === 'recipes') loadRecipes();
-            if (btn.dataset.section === 'emergency') displayEmergencyNumbers('national');
-            if (btn.dataset.section === 'profile') loadProfile();
-            if (btn.dataset.section === 'settings') { loadNotifSettings(); updateCooldownStatus(); }
-        });
+        document.getElementById('reportCategory').value = '';
+        document.getElementById('reportLocation').value = '';
+        document.getElementById('reportDescription').value = '';
+        selectedVideo = null;
+        document.getElementById('videoFileName').innerHTML = 'no video selected';
     });
     
     // ============================================================
@@ -1506,7 +1707,10 @@
         fallActive = document.getElementById('fallDetectionToggle').checked;
         gpsAutoUpdateEnabled = document.getElementById('gpsAutoUpdateToggle').checked;
         
-        initFall(); renderGuardians(); initMap(); loadProfile();
+        initFall();
+        renderGuardians();
+        initMap();
+        loadProfile();
         loadAddressesFromProfile();
         loadNotifSettings();
         updateCooldownStatus();
@@ -1526,7 +1730,10 @@
         fallActive = saved.fall !== false;
         gpsAutoUpdateEnabled = saved.gpsAutoUpdate !== false;
         loadAddressesFromProfile();
-        initFall(); renderGuardians(); initMap(); loadProfile();
+        initFall();
+        renderGuardians();
+        initMap();
+        loadProfile();
         loadNotifSettings();
         updateCooldownStatus();
         if (Notification.permission !== 'granted') Notification.requestPermission();
@@ -1559,8 +1766,9 @@
         updateCooldownStatus();
     }, 10000);
     
-    console.log("Pelo enhanced - Adjustable notification cooldown system active");
-    console.log("Cooldown: " + notifSettings.cooldownSeconds + "s, Max/min: " + notifSettings.maxPerMinute);
+    console.log("✅ Pelo enhanced - Map fixed with dark mode tiles");
+    console.log("🗺️ Map containers should now render properly");
+    console.log("🔄 Cooldown: " + notifSettings.cooldownSeconds + "s, Max/min: " + notifSettings.maxPerMinute);
 </script>
 </body>
 </html>
